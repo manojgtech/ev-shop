@@ -308,36 +308,98 @@ function markfeatured()
 
 function shopPage()
 {
-
+  
     if (isset($_POST['data'])) {
-        $filter = $_POST['data']['filter'];
-        $val = htmlspecialchars(trim($_POST['data']['value']));
-        $sort = $_POST['data']['sort'];
+        $cat = isset($_POST['data']['cat']) ? $_POST['data']['cat']:null;
+        $model = isset($_POST['data']['model']) ? $_POST['data']['model']:null;
+        $brand = isset($_POST['data']['brand']) ? $_POST['data']['brand']:null;
+        $sort =  isset($_POST['data']['sort']) ? $_POST['data']['sort']:'l';
+        $search= isset($_POST['data']['search']) ? $_POST['data']['search']:'';
+        $price= isset($_POST['data']['price']) ? $_POST['data']['price']:null;
+        $pcats=isset($_POST['data']['cats']) ? $_POST['data']['cats']:[];
+        $battery=isset($_POST['data']['battery']) ? $_POST['data']['battery']:[];
+        $chargeTime=isset($_POST['data']['chargeTime']) ? $_POST['data']['chargeTime']:[];
         
-        if ($filter == "cat") {
-            $cats = DB::query("select * from vehicles where slug='$val'");
+        $burl="";
+        $where="";
+        if (!empty($cat)) {
+            $cats = DB::query("select * from vehicles where slug='$cat'");
             $catid = $cats[0]['id'];
             $where = "where u.category_id=$catid";
-        } if ($filter == "brand") {
-            $cats = DB::query("select * from brands where brand_name='$val'");
-            $catid = $cats[0]['id'];
-            $where = "where u.make=$catid";
-        }else if($filter=='price'){
-            $vals=explode(":",$val);
-            $where = " where u.ex_showRoom_price between $val[0] and $val[1] ";
-        } else if($filter=='search'){
+        
+        }
+        if (!empty($model)) {
+            $where = "where u.model like '%".$model."%'";
+        
+        }
+        if ( count($pcats)>0) {
             
-            $vals=htmlspecialchars(trim($val));
-            if($vals!=""){
-                $where = " where title like '%".$vals."%' ";
+            if(!empty($where)){
+                $where.=" or ";
             }else{
-                $where = "  ";
+                $where.=" where "; 
+            }
+             $cats1=implode(",",$pcats);
+            $pcats =join(',', array_map('intval', $pcats));
+            $where .= "u.category_id in ($pcats)";
+            
+        }
+        
+        if (count($battery)>0) {
+            
+            if(!empty($where)){
+                $where.=" or ";
+            }else{
+                $where.=" where "; 
+            }
+            $battery1=implode("','",$battery);
+            $where .= "u.battery in ('".$battery1."')";
+            
+        }
+        if (count($chargeTime)>0) {
+            
+            if(!empty($where)){
+                $where.=" or ";
+            }else{
+                $where.=" where "; 
+            }
+            $chargeTime1=implode("','",$chargeTime);
+            $where .= "u.charging_time in ('".$chargeTime1."')";
+            
+        }
+        if (!empty($brand)) {
+            $cats = DB::query("select * from brands where brand_name like '%".$brand."%'");
+            $catid = $cats[0]['id'];
+            if(!empty($where)){
+                $where.=" or ";
+            }else{
+                $where.=" where "; 
+            }
+            $where .= "u.make=$catid";
+            
+        }
+        if(!empty($price)){
+             $price=str_replace("INR","",$price);
+             $vals=explode("-",$price);
+            if(($vals[1]-$vals[0])>0){
+                if(!empty($where)){
+                    $where.=" or ";
+                }else{
+                    $where.=" where "; 
+                }
+                $where .= " u.ex_showRoom_price between $vals[0] and $vals[1] ";
             }
             
+            
+        } 
+         if(!empty($search)){
+            
+            $vals=htmlspecialchars(trim($search));
+            
+                $where = "where title like '%".$vals."%' ";
+                
 
-        } else {
-            $where = "";
-        }
+        } 
         $sortby=" order by created_at desc ";
         if($sort=='l'){
             $sortby=" order by created_at desc ";
@@ -351,20 +413,28 @@ function shopPage()
         if($sort=='hp'){
             $sortby=" order by ex_showroom_price desc ";
         }
-
-        $prods = DB::query("SELECT u.*, p.* FROM products AS u LEFT JOIN product_images AS p ON p.id = ( SELECT id FROM product_images AS p2 WHERE p2.product_id = u.id LIMIT 1 ) $where $sortby   limit 15;");
+       
+        $total = DB::query("SELECT u.*, p.* FROM products AS u LEFT JOIN product_images AS p ON p.id = ( SELECT id FROM product_images AS p2 WHERE p2.product_id = u.id LIMIT 1 ) $where ");
     } else {
-        $prods = DB::query("SELECT u.*, p.* FROM products AS u LEFT JOIN product_images AS p ON p.id = ( SELECT id FROM product_images AS p2 WHERE p2.product_id = u.id LIMIT 1 ) order by created_at desc limit 15;");
-    }
 
+        $total = DB::query("SELECT u.*, p.* FROM products AS u LEFT JOIN product_images AS p ON p.id = ( SELECT id FROM product_images AS p2 WHERE p2.product_id = u.id LIMIT 1 ) $where ");
+        $perPage = 10;
+        }
 
-
-
-?>
+        $perPage = 10;
+        
+        $total = count($total);
+        $page = (isset($_POST['data']['page'])) ? (int)$_POST['data']['page'] : 1;
+        $startAt = $perPage * ($page - 1);
+        $totalPages = ceil($total/$perPage);
+         
+        $prods = DB::query("SELECT u.*, p.* FROM products AS u LEFT JOIN product_images AS p ON p.id = ( SELECT id FROM product_images AS p2 WHERE p2.product_id = u.id LIMIT 1 ) $where $sortby  limit $startAt,$perPage ;");
+    //echo DB::lastQuery();
+        
+        ?>
 
 
     <?php
-
     if (count($prods) > 0) {
         $i = 0;
         foreach ($prods as $prod) {
@@ -403,17 +473,18 @@ function shopPage()
 
                                 <p><?php echo substr(htmlspecialchars_decode($prod['description']), 0, 100) . '...'; ?></p>
                                 <ul class="upcomingfirstullist">
-                                    <li><i class="fa fa-flash"></i><span><?php echo $prod['driving_range']; ?>*</span><label>Per Charge</label></li>
-                                    <li><i class="fa fa-flash"></i><span><?php echo $prod['warranty']; ?>*</span><label>of Warranty</label></li>
-                                    <li><i class="fa fa-flash"></i><span><?php echo $prod['charging_time']; ?>*</span><label>For Full Charge</label></li>
-                                    <li><i class="fa fa-flash"></i><span><?php echo $prod['battery']; ?>*</span><label>Battery</label></li>
+                                    <li><i class="fa fa-flash"></i><span><?php echo $prod['driving_range'] ?? 0; ?>*</span><label>Per Charge</label></li>
+                                    <li><i class="fa fa-flash"></i><span><?php echo $prod['warranty']?? 0; ?>*</span><label>of Warranty</label></li>
+                                    <li><i class="fa fa-flash"></i><span><?php echo $prod['charging_time'] ?? 0; ?>*</span><label>For Full Charge</label></li>
+                                    <li><i class="fa fa-flash"></i><span><?php echo $prod['battery']?? ''; ?>*</span><label>Battery</label></li>
                                 </ul>
                             </div>
                             <!-- row -->
                             <div class="courses-box-footer listingpagecolumn">
                                 <ul>
+                                
                                     <li class="students-number">
-                                        <a onclick="requestmodal1('requestmodal1',1,<?php echo $prod['id']; ?>)">Enquire Now</a>
+                                        <a onclick="requestmodal1('requestmodal1',1,<?php echo $prod['id']; ?>);">Enquire Now</a>
                                         <!--<i class='bx bx-user'></i> 10 students-->
                                     </li>
 
@@ -422,20 +493,35 @@ function shopPage()
                                         <a  onclick="requestmodal1('requestmodal1',2,<?php echo $prod['id']; ?>);">Request a Call Back</a>
                                     </li>
 
-                                    <!--
-<li class="courses-price">
-<i>₹</i>780
+                                    
+
+
+                                    <li class="courses-price">
+<i>₹</i><?php echo $prod['ex_showroom_price']; ?>
 </li>
--->
+
                                 </ul>
                             </div>
                         </div>
                     </div>
+  
                 </div>
             </div>
 
 <?php $i++;
         }
+  
+    
+
+        $links = "<ul class='pagination'>";
+                    for ($i = 1; $i <= $totalPages; $i++) {
+                        $links .= ($i != $page)
+                            ? "<li class='page-item'><a class='page-link' onclick='RenderPage(".$i.");'>Page $i</a> </li>"
+                            : "<li class='page-item'><a class='page-link'> Page $page</a></li>";
+                    }
+                    $links .= "<ul>";
+                    echo $links;
+           
     }else{
         echo "<p class='text-warning'>No product found!</p>";
     }

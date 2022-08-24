@@ -8,11 +8,24 @@
     <?php include 'include/navigation.php'; ?>
 
     <?php include 'include/websiteoverlaydontdel.php'; ?>
-
+    <?php
+ if(isset($_POST['bookdrive'])){
+     $s=DB::insert("testdrives",["name"=>$_POST['name'],'email'=>$_POST['email'],"phone"=>$_POST['phone'],'city'=>$_POST['city'],'address'=>$_POST['address'],'cate'=>$_POST['category'],'brand'=>$_POST['brand'],'model'=>$_POST['model']]);
+     if($s){
+         ?>
+<script>
+    alert("Test drive booked");
+    window.location='<?php echo $_POST['selfurl']; ?>';
+</script>
+    <?php     
+     }
+ }
+?>
     <?php
     $slug = isset($_GET['product']) ?  $_GET['product'] : null;
     $prod = DB::query("SELECT * FROM products where slug='" . trim($slug) . "' limit 1");
     $id = $prod[0]['id'];
+    $pcat=DB::queryFirstRow("select * from vehicles where id=%i",$prod[0]['category_id']);
     $imgs = DB::query("SELECT * FROM product_images where product_id=$id");
 
     $prod = $prod[0];
@@ -24,7 +37,7 @@
             <div class="page-title-content">
                 <ul>
                     <li><a href="index.php">Home</a></li>
-                    <li><a href="#">Low Speed Scooters</a></li>
+                    <li><a href="Shop-ev.php?cat=<?php echo ucwords($pcat['slug']); ?>"><?php echo ucwords($pcat['name']); ?></a></li>
                     <li><?php echo ucwords($prod['title']); ?></li>
                 </ul>
                 <h2><?php echo $prod['title']; ?></h2>
@@ -62,8 +75,8 @@
                         <p>240 reviews</p>
                     </div>
                     <div class="price">
-                        <span>$38.00</span>
-                        <span>$49.99</span>
+                        <span style="text-decoration: line-through;">INR<?php echo $prod['ex_showroom_price']+$prod['ex_showroom_price']*rand(0.16,0.75)/100;  ?></span>
+                        <span style="text-decoration:none;">INR <?php echo $prod['ex_showroom_price'];  ?></span>
                     </div>
                     <div class="row" style="display:none;">
                         <div class="col-md-4">
@@ -116,7 +129,7 @@
                                 <a href="#" class="custom-btn" onclick="addtocart(<?php echo $prod['id'] ?>,'<?php echo $prod['title'] ?>','<?php echo $prod['slug'] ?>',<?php echo $prod['ex_showroom_price']; ?>);">Add To Cart <i class="fa fa-car"></i></a>
                             </div>
                             <div class="col-md-6">
-                                <a href="#" class="custom-btn">Buy Now <i class="fa fa-car"></i></a>
+                                <a href="checkout.php?id=<?php echo base64_encode($prod['id']);?>" class="custom-btn">Buy Now <i class="fa fa-car"></i></a>
                             </div>
                         </div>
                     </div>
@@ -144,19 +157,19 @@
                             <ul>
                                 <li>
                                     <label>Ex-Showroom Price</label>
-                                    <span><?php echo $prod['ex_showroom_price']; ?></span>
+                                    <span>Rs.<?php echo $prod['ex_showroom_price']; ?></span>
                                 </li>
                                 <li>
                                     <label>RTO</label>
-                                    <span>Rs.8,811</span>
+                                    <span>Rs.<?php echo $prod['rto']; ?></span>
                                 </li>
                                 <li>
                                     <label>Insurance</label>
-                                    <span>Rs.3,139</span>
+                                    <span>Rs.<?php echo $prod['insurance']; ?></span>
                                 </li>
                                 <li style="margin-bottom:0px;" class="lastchildlist">
                                     <label>On-Road Price in Delhi<i>(Not Available in Gurgaon)</i></label>
-                                    <span>Rs.1,22,099*</span>
+                                    <span>Rs. <?php echo $prod['ex_showroom_price']+$prod['rto']+$prod['insurance']; ?>*</span>
                                 </li>
                             </ul>
                         </div>
@@ -172,13 +185,13 @@
                                 <li>
                                     <img src="assets/img/icons/car.png" alt="" title="">
                                     <span>Driving Range</span>
-                                    <label>181 km/charge</label>
+                                    <label>$prod['driving_range']; km/charge</label>
                                 </li>
 
                                 <li>
                                     <img src="assets/img/icons/accumulator.png" alt="" title="">
                                     <span>Battery Capacity</span>
-                                    <label>3.97 KWh</label>
+                                    <label>$prod['battery']; KWh</label>
                                 </li>
 
                                 <li>
@@ -247,64 +260,32 @@
                         <div class="col-md-12 commonproductdetails" id="review">
                             <h3>Product Review</h3>
                             <div class="courses-review-comments">
-                                <h3>3 Reviews</h3>
-
-                                <div class="user-review">
+                                <?php $feebbacks=DB::query("select * from feedbacks where product=$id"); ?>
+                                <h3><?php echo count($feebbacks); ?> Reviews</h3>
+                                    <?php 
+                                     if(count($feebbacks)){
+                                         foreach($feebbacks as $feebback){
+                                    ?> 
+                                    <div class="user-review">
                                     <img src="assets/img/user1.jpg" alt="image">
 
                                     <div class="review-rating">
                                         <div class="review-stars">
+                                            <?php for($i=0;$i<$feebback['rating']; $i++){ ?>
                                             <i class='fa fa-star'></i>
-                                            <i class='fa fa-star'></i>
-                                            <i class='fa fa-star'></i>
-                                            <i class='fa fa-star'></i>
-                                            <i class='fa fa-star'></i>
+                                            <?php } ?>
                                         </div>
 
-                                        <span class="d-inline-block">James Anderson</span>
+                                        <span class="d-inline-block"><?php echo $feebback['name']; ?></span>
                                     </div>
 
-                                    <span class="d-block sub-comment">Excellent</span>
-                                    <p>Very well built theme, couldn't be happier with it. Can't wait for future updates to see what else they add in.</p>
+                                    <span class="d-block sub-comment"><?php echo $feebback['subject']; ?></span>
+                                    <p><?php echo $feebback['feedback']; ?></p>
                                 </div>
-
-                                <div class="user-review">
-                                    <img src="assets/img/user2.jpg" alt="image">
-
-                                    <div class="review-rating">
-                                        <div class="review-stars">
-                                            <i class='fa fa-star'></i>
-                                            <i class='fa fa-star'></i>
-                                            <i class='fa fa-star'></i>
-                                            <i class='fa fa-star'></i>
-                                            <i class='fa fa-star'></i>
-                                        </div>
-
-                                        <span class="d-inline-block">Sarah Taylor</span>
-                                    </div>
-
-                                    <span class="d-block sub-comment">Video Quality!</span>
-                                    <p>Was really easy to implement and they quickly answer my additional questions!</p>
-                                </div>
-
-                                <div class="user-review">
-                                    <img src="assets/img/user3.jpg" alt="image">
-
-                                    <div class="review-rating">
-                                        <div class="review-stars">
-                                            <i class='fa fa-star'></i>
-                                            <i class='fa fa-star'></i>
-                                            <i class='fa fa-star'></i>
-                                            <i class='fa fa-star'></i>
-                                            <i class='fa fa-star'></i>
-                                        </div>
-
-                                        <span class="d-inline-block">David Warner</span>
-                                    </div>
-
-                                    <span class="d-block sub-comment">Perfect Coding!</span>
-                                    <p>Stunning design, very dedicated crew who welcome new ideas suggested by customers, nice support.</p>
-                                </div>
+                                  <?php }
+                                     }
+                                  ?>
+                                
                             </div>
                         </div>
                     </div>
@@ -318,39 +299,41 @@
                             <div class="students-feedback-form">
 
 
-                                <form>
+                                <form id="prod_review_form" name="feedback_form" method="post" action="saveFeedback.php" >
                                     <div class="row">
                                         <div class="col-lg-6 col-md-6">
+                                            <input type="hidden" name="product_id" value="<?php echo $id; ?>">
+                                            <input type="hidden" name="slug" value="<?php echo $prod['slug']; ?>">
                                             <div class="form-group">
-                                                <input type="text" class="form-control" placeholder="Your name*">
+                                                <input type="text" class="form-control" name="name"  placeholder="Your name*">
                                                 <span class="label-title"><i class='fa fa-user'></i></span>
                                             </div>
                                         </div>
 
                                         <div class="col-lg-6 col-md-6">
                                             <div class="form-group">
-                                                <input type="text" class="form-control" placeholder="Subject*">
+                                                <input type="text" class="form-control" name="subject"  placeholder="Subject*">
                                                 <span class="label-title"><i class='fa fa-home'></i></span>
                                             </div>
                                         </div>
 
                                         <div class="col-lg-6 col-md-6">
                                             <div class="form-group">
-                                                <input type="email" class="form-control" placeholder="Your email*">
+                                                <input type="email" class="form-control"  name="email"  placeholder="Your email*">
                                                 <span class="label-title"><i class='fa fa-envelope-o'></i></span>
                                             </div>
                                         </div>
 
                                         <div class="col-lg-6 col-md-6">
                                             <div class="form-group">
-                                                <input type="text" class="form-control" placeholder="Your phone*">
+                                                <input type="text" class="form-control" name="phone"  placeholder="Your phone*">
                                                 <span class="label-title"><i class='fa fa-phone'></i></span>
                                             </div>
                                         </div>
 
                                         <div class="col-lg-12 col-md-12">
                                             <div class="form-group">
-                                                <textarea cols="30" rows="5" class="form-control" placeholder="Write something here (Optional)"></textarea>
+                                                <textarea cols="30" rows="5" class="form-control" name="feedback" placeholder="Write something here (Optional)"></textarea>
                                                 <span class="label-title"><i class='fa fa-pencil'></i></span>
                                             </div>
                                         </div>
@@ -360,15 +343,15 @@
                                             <div class="form-group">
                                                 <div class="feedback">
                                                     <div class="rating">
-                                                        <input type="radio" name="rating" id="rating-5">
+                                                        <input type="radio" name="rating" id="rating-5" value="1">
                                                         <label for="rating-5"></label>
-                                                        <input type="radio" name="rating" id="rating-4">
+                                                        <input type="radio" name="rating" id="rating-4" value="2">
                                                         <label for="rating-4"></label>
-                                                        <input type="radio" name="rating" id="rating-3">
+                                                        <input type="radio" name="rating" id="rating-3" value="3">
                                                         <label for="rating-3"></label>
-                                                        <input type="radio" name="rating" id="rating-2">
+                                                        <input type="radio" name="rating" id="rating-2" value="4">
                                                         <label for="rating-2"></label>
-                                                        <input type="radio" name="rating" id="rating-1">
+                                                        <input type="radio" name="rating" id="rating-1" value="5">
                                                         <label for="rating-1"></label>
                                                         <div class="emoji-wrapper">
                                                             <div class="emoji">
@@ -466,7 +449,7 @@
 
 
                                         <div class="col-lg-12 col-md-12">
-                                            <button type="submit" class="default-btn"><i class='fa fa-eye icon-arrow before'></i><span class="label">Send Feedback</span><i class="fa fa-car icon-arrow after"></i></button>
+                                            <button type="submit" id="submit_feedbachfrm"  class="default-btn"><i class='fa fa-eye icon-arrow before'></i><span class="label">Send Feedback</span><i class="fa fa-car icon-arrow after"></i></button>
                                         </div>
                                     </div>
                                 </form>

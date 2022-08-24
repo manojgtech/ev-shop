@@ -20,7 +20,9 @@
 <!-- MeanMenu JS -->
 <script src="assets/js/meanmenu.min.js"></script>
 <!-- Nice Select JS -->
+<?php  if(!strpos($_SERVER['REQUEST_URI'],'checkout.php')){ ?>
 <script src="assets/js/jquery.nice-select.min.js"></script>
+<?php } ?>
 <!-- Viewer JS -->
 <script src="assets/js/viewer.min.js"></script>
 <!-- Slick JS -->
@@ -30,15 +32,19 @@
 <!-- AjaxChimp JS -->
 <script src="assets/js/jquery.ajaxchimp.min.js"></script>
 <!-- Form Validator JS -->
-<script src="assets/js/form-validator.min.js"></script>
+<script src="assets/js/form-validator.min.js"></script
 <!-- Contact Form JS -->
-<script src="assets/js/contact-form-script.js"></script>
+<!-- Contact Form JS -->
+<?php  if(!strpos($_SERVER['REQUEST_URI'],'checkout.php')){ ?>
+  <script src="assets/js/contact-form-script.js"></script>
+<?php } ?>
 <!-- Raque Map JS -->
 <script src="assets/js/raque-map.js"></script>
 <script src="assets/js/functions.js"></script>
 <!-- Main JS -->
+<?php  if(!strpos($_SERVER['REQUEST_URI'],'checkout.php')){ ?>
 <script src="assets/js/main.js"></script>
-
+<?php } ?>
 
 
 <script type="text/javascript" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/43033/owl.carousel.min.js"></script>
@@ -50,6 +56,8 @@
 <script type="text/javascript" src="assets/js/civilmanthan.js"></script>
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.js"></script>
+    
+    
 
 
 
@@ -79,6 +87,10 @@
   </div>
 </div>
 
+    
+    
+
+    
 
 
 <script type="text/javascript">
@@ -98,7 +110,7 @@
 <script type="text/javascript">
   $('.owl_carousel123').owlCarousel({
     stagePadding: 200,
-    loop: true,
+    loop: false,
     margin: 10,
     nav: false,
     items: 1,
@@ -135,4 +147,29 @@
       }
     }
   })
+</script>
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+
+
+
+
+    <script type="text/javascript">
+$('label').on('click', function(){
+var color = $(this).next().css('color');
+  console.log(color);
+  if (color == 'rgb(177, 177, 177)') {
+    $(this).next().addClass('grey');
+  }
+  else { 
+    $(this).next().removeClass('grey');
+  }
+});
+
+$.fn.digits = function(){ 
+    return this.each(function(){ 
+        $(this).text( $(this).text().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") ); 
+    })
+}
 </script>

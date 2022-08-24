@@ -77,8 +77,8 @@ else{
 									<div class="panel-heading">Notification</div>
 									   <div class="panel-body">
 <?php 
-$reciver = $_SESSION['alogin'];
-$sql = "SELECT * from  notification where notireciver = (:reciver) order by time DESC";
+$reciver = $_SESSION['aloginid'];
+$sql = "SELECT * from  notification where notiuser = (:reciver) order by time DESC";
 $query = $dbh -> prepare($sql);
 $query-> bindParam(':reciver', $reciver, PDO::PARAM_STR);
 $query->execute();

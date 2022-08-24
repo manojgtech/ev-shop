@@ -1,7 +1,5 @@
 
-
-
-                        <div class="modal fade" tabindex="-1" role="dialog" id="requestmodal1">
+<div class="modal fade" tabindex="-1" role="dialog" id="requestmodal1">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -40,11 +38,14 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <!-- <button type="button" class="btn btn-primary" id="delpopup_btn" data-id="" onclick="delcat();">Save changes</button> -->
+        
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+</div>
+
+</div>
+
 
 
         <!-- Start Footer Area -->
@@ -148,5 +149,19 @@
         <!-- End Footer Area -->
         
         <div class="go-top"><i class='fa fa-flash'></i></div>
+
+        <!-- cookie consent -->
+        <!-- Cookie Consent by https://www.FreePrivacyPolicy.com -->
+<script type="text/javascript" src="//www.freeprivacypolicy.com/public/cookie-consent/4.0.0/cookie-consent.js" charset="UTF-8"></script>
+<script type="text/javascript" charset="UTF-8">
+document.addEventListener('DOMContentLoaded', function () {
+cookieconsent.run({"notice_banner_type":"simple","consent_type":"express","palette":"dark","language":"en","page_load_consent_levels":["strictly-necessary"],"notice_banner_reject_button_hide":false,"preferences_center_close_button_hide":false,"page_refresh_confirmation_buttons":false,"website_name":"digitalgoldbox.in/evfy","website_privacy_policy_url":"digitalgoldbox.in/evfy/privacy-policy.php"});
+});
+</script>
+
+<noscript>Cookie Consent by <a href="https://www.freeprivacypolicy.com/" rel="nofollow noopener">Free Privacy Policy Generator website</a></noscript>
+<!-- End Cookie Consent -->
+
+        
 
 

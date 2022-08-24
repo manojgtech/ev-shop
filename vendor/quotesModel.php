@@ -24,6 +24,9 @@ if (isset($_POST['func'])) {
         case 'viewC':
             viewCategory();
             break;
+            case 'cities':
+                getcities();
+                break;
         case 'getlocs':
             getlocs();
             break;
@@ -212,6 +215,7 @@ function getlocs()
     $city = $_POST['data'] ?? null;
     $cities = DB::query("select * from charging_locations where  city=$city");
     $html = "";
+    
     if (count($cities) > 0) {
         foreach ($cities as $city) {
 
@@ -219,8 +223,8 @@ function getlocs()
                             <h4>' . $city['loc_title'] . '</h4>
                             <p>' . $city['address'] . '</p>
                             <ul>
-                                <li><a target="_blank" href="' . $city['map'] . '">View On Map</a></li>
-                                <li><a target="_blank" href="">Get Direction</a></li>
+                                <li><a  data-href="'.urlencode($city['address']). '" onclick="ShowMapUrl(this);">View On Map</a></li>
+                                <li><a  data-lat="'.$city['lat'].'" data-lang="'.$city['lang'].'"  onclick="showdir(this);">Get Direction</a></li>
                             </ul>
                         </div>';
         }

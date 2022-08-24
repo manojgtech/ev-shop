@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!doctype html>
 <html lang="zxx">
 
@@ -10,7 +11,32 @@
          <?php include 'include/preloader.php';?>
 
         <?php include 'include/navigation.php';?>
+		<?php
 
+if (isset($_POST['loginuser'])) {
+	$status = '1';
+	$email = trim($_POST['email']);
+	$password = md5(trim($_POST['password']));
+	$sql = "SELECT * FROM users WHERE email=%s and password=%s";
+	$q=DB::query($sql,$email,$password);
+	
+	
+	if (count($q)>0) {
+		
+		$_SESSION['email'] = $_POST['email'];
+		$_SESSION['mobile'] = $q[0]['mobile'];
+		$_SESSION['name'] =  $q[0]['first_name']." ".$q[0]['last_name'];
+		$_SESSION['image'] =  $q[0]['image'];
+		$_SESSION['userid'] = $q[0]['id'];
+
+		echo "<script type='text/javascript'> document.location = 'my-account.php'; </script>";
+	} else {
+
+		echo "<script>swal('Invalid Details Or Account Not Confirmed');document.location = 'login.php';</script>";
+	}
+}
+
+?>
         <!-- Start Login Area -->
         <section class="login-area">
             <div class="row m-0">
@@ -31,7 +57,7 @@
                                     
 
                                     
-                                    <form class="loginform">
+    <form class="loginform" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
 	<div class="svgContainer">
 		<div>
 			<svg class="mySVG" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 200 200">
@@ -125,14 +151,15 @@
 	
 	<div class="inputGroup inputGroup1">
 		
-		<input type="text" id="email" class="email form-control" placeholder="Enter your email or Phone" maxlength="256"/>
+		<input type="text" id="email" name="email" class="email form-control" placeholder="Enter your email or Phone" maxlength="256"/>
 	</div>
 	<div class="inputGroup inputGroup2">
-		<input type="password" id="password" class="password form-control" placeholder="Enter Your Password" />
+		<input type="password" id="password" name="password" class="password form-control" placeholder="Enter Your Password" />
 	</div>
 	<div class="inputGroup inputGroup3">
-		<button id="login">Log in</button>
+		<button type="submit" name="loginbtn" id="login">Log in</button>
 	</div>	
+	<input type="hidden" name="loginuser">
     <p>New to EVFY Network? <a href="register.php">Sign up</a></p>
                                                                                 
 <p>Did yoy forgot your Password? <a href="forgotpassword.php">Forgot Password</a></p>

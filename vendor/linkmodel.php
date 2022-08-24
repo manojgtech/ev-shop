@@ -29,28 +29,20 @@ if (isset($_POST['func'])) {
 
 function editLink()
 {
-    $id = $_POST['id'];
-    $row = DB::queryFirstRow("SELECT * FROM vehicles WHERE id=%i", $id);
+    $id = $_POST['val'];
+    $row = DB::queryFirstRow("SELECT * FROM links WHERE id=%i", $id);
+    
     if (empty($row)) {
         echo '0';
     } else {
-        $ac1 = ($row['status'] == 1) ? 'selected' : '';
-        $ac2 = ($row['status'] != 1) ? 'selected' : '';
-        $html = "<div class='form-group'><label>Name</label><input class='form-control' onblur='getslug(this.value,\"etitleslug\");'  type='text' value='" . $row['name'] . "' name='name' required placeholder='Category'/></div>";
-        $html .= "<div class='form-group'><label>Slug</label><input class='form-control' id='etitleslug' type='text' value='" . $row['slug'] . "' readonly name='slug' required placeholder='slug' /></div>";
-        // $html .= "<div class='form-group'><label>Image</label><input class='form-control' id='catfile1' type='file' value='' name='file' /></div>";
-        $html = $html . "<div class='form-group'><label>Name</label><img src='../assets/img/categories/" . $row['image'] . "' width='10%'><input type='file' name='file' class='form-control'></div>";
-        $html .= "<input type='hidden' value='" . $row['id'] . "' name='id'/>";
-
-        $html .= "<div class='form-group'><label>Status</label><select  class='form-control' name='status' /><option value=1 $ac1>Active</option><option value=0 $ac2>Dective</option></select></div>";
-        echo $html;
+       echo json_encode($row);
     }
 }
 
 function viewLink()
 {
-    $results1 = DB::query("SELECT * FROM links  order by id desc");
-
+    $results1 = DB::query("SELECT s.*,m.title as parent_title FROM links s left join links m on m.id=s.parent  order by s.id desc");
+    
 ?>
     <?php if (!empty($results1)) { ?>
         <table class="table table-bordered" id="catdataTable" width="100%" cellspacing="0">
@@ -60,7 +52,7 @@ function viewLink()
                     <th>Title</th>
                     <th>Parent</th>
                     <th>Link</th>
-                    
+                    <th>Order</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -70,18 +62,18 @@ function viewLink()
                     <th>Title</th>
                     <th>Parent</th>
                     <th>Link</th>
-                    
+                    <th>Order</th>
                     <th>Actions</th>
                 </tr>
             </tfoot>
             <tbody>
-                <?php foreach ($results1 as $row) { ?>
+                <?php foreach($results1 as $row) { ?>
                     <tr id="row_<?php echo $row['id']; ?>" data-id="<?php echo $row['id']; ?>">
                         <td><input type="checkbox" name="allcats" class="pids" id="check_<?php echo $row['id']; ?>" data-id="<?php echo $row['id']; ?>" onclick="chechThisc(<?php echo $row['id']; ?>,this.id);" /></td>
                         <td><?php echo $row['title']; ?></td>
-                    
-                        <td><?php echo $row['parent']; ?></td>
+                        <td><?php echo $row['parent_title'] ?? 'No parent'; ?></td>
                         <td><?php echo $row['url']; ?></td>
+                        <td><?php echo $row['linkorder']; ?></td>
                         <td><i class="fa fa-edit" data-id="<?php echo $row['id']; ?>" onclick="showLinkEditForm(<?php echo $row['id']; ?>);"></i>&nbsp;|&nbsp;<i class="fa fa-trash" data-id="<?php echo $row['id']; ?>" onclick="showLinkDelAlert(<?php echo $row['id']; ?>);"></i></td>
                     </tr>
                 <?php } ?>
@@ -187,13 +179,14 @@ function findCatmodel()
 
 function findLinks(){
     $v=htmlspecialchars(trim($_POST['val']));
+    $n=$_POST['n'];
     if(strlen($v)>2){
         $res=DB::query("(select title  ,id ,slug, 'Product' as type from products  where products.title like '%".$v."%') union (select name as title ,id ,slug,'Category' as type from vehicles  where  vehicles.name like '%".$v."%') union (select brand_name as title ,id ,brand_name as  slug,'Brand' as type from brands  where  brands.brand_name like '%".$v."%') ");
        // echo DB::lastQuery();
        $html="<ul class='list-group'>";
         if(count($res)>0){
             foreach($res as $it){
-                $html=$html."<li class='list-group-item' data-type=".$it['type']." data-id=".$it['id']." data-slug=".$it['slug']." id='sres_".$it['id']."' onclick='feedit(this.id);'>".ucwords($it['title'])." (".$it['type'].")</li>";
+                $html=$html."<li class='list-group-item' data-type=".$it['type']." data-id=".$it['id']." data-slug=".$it['slug']." id='sres_".$it['id']."' onclick='feedit(this.id,".$n.");'>".ucwords($it['title'])." (".$it['type'].")</li>";
             }
         }else{
             $html.="<li class='list-group-item'>No Result</li>";
@@ -221,5 +214,23 @@ function addLink(){
 function deleteLink(){
     $id=$_POST['data'];
     echo DB::query("delete from links where id=$id");
+}
+
+function updateLink(){
+    
+        $title=isset($_POST['title']) ? $_POST['title']:null;
+        $par=isset($_POST['link']) ? $_POST['link']:0;
+        $link=isset($_POST['custom']) ? $_POST['custom']:null;
+        $linkorder=isset($_POST['lorder']) ? $_POST['lorder']:null;
+        $type=isset($_POST['type']) ? $_POST['type']:null;
+        $id=isset($_POST['id']) ? $_POST['id']:null;
+        if($title!=null && $link!=null && $id!=null){
+            DB::update("links",['title'=>$title,'url'=>$link,'parent'=>$par,'type'=>$type,'linkorder'=>$linkorder],"id=$id");
+            echo 1;
+            die;
+        }
+        echo 0;
+    
+    
 }
 ?>

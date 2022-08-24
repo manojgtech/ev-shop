@@ -1,5 +1,5 @@
 var ids = [];
-var baseurl = "http://localhost:8081/evfy/";
+var baseurl = "https://digitalgoldbox.in/evfy/";
 function chechThisc(id, pid) {
     console.log(id, pid);
     if ($("#" + pid).is(":checked")) {
@@ -112,6 +112,21 @@ function loadCategory() {
     });
 }
 
+function loadUsers() {
+    $("#bloader").show();
+    $.ajax({
+        type: "POST",
+        url: baseurl + 'vendor/userModel.php',
+        data: { func: 'viewUser' },
+        success: function (response) {
+
+            $("#usersdiv").html(response);
+            $('#catdataTable').DataTable();
+            $("#bloader").hide();
+        }
+    });
+}
+
 function loadLinks() {
     $("#bloader").show();
     $.ajax({
@@ -121,6 +136,22 @@ function loadLinks() {
         success: function (response) {
 
             $("#linksdiv").html(response);
+            $('#catdataTable').DataTable();
+            $("#bloader").hide();
+        }
+    });
+}
+
+
+function loadClocations() {
+    $("#bloader").show();
+    $.ajax({
+        type: "POST",
+        url: baseurl + 'vendor/clocsModel.php',
+        data: { func: 'viewLoc' },
+        success: function (response) {
+
+            $("#clocsdiv").html(response);
             $('#catdataTable').DataTable();
             $("#bloader").hide();
         }
@@ -216,7 +247,8 @@ function editCat(th) {
         }).then(resonse =>resonse.json()).then(res=>{
                
             if (res.msg==1) {
-                $(".catalert").addClass("text-success").text("Data saved successfully");
+                swal("Data saved successfully");
+                
                 setTimeout(() => {
                     $(".catalert").addClass("text-success").text("");
                     $("#editcatspopup").modal('hide');
@@ -232,14 +264,24 @@ function editCat(th) {
 }
 
 function editBrand(th) {
-    let formdata = $("#brand-form-edit").serialize();
+    
+    var formData = new FormData($('#brand-form-edit')[0]);
+    formData.append("func", "updateC");
+    var name = document.getElementById("brand-form-edit").elements["name"].value;
+    if (typeof name === 'undefined' || name == '' || name.length == 0) {
+        $(".brandalert").text("Name required").addClass("text-success");
+        return false;
+    }
     $.ajax({
         type: "POST",
         url: baseurl + 'vendor/brandModel.php',
-        data: { func: 'updateC', data: formdata },
+        data:  formData, 
+        cache : false,
+        processData: false,
+         contentType: false,
         success: function (response) {
-            $("#cat-form-add")[0].reset();
-            $(".brandalert").text("Data saved").addClass("text-success");
+            $("#brand-form-edit")[0].reset();
+            swal("Data saved successfully");
             if (response == 1) {
                 setTimeout(() => {
                     $("#editbrandspopup").modal('hide');
@@ -280,9 +322,9 @@ function addcat(th) {
             if (res.msg==1) {
 
                 
-                $(".catalert").addClass("text-success").text("Data saved successfully");
+                swal("Data added successfully.");
                 setTimeout(() => {
-                    $(".catalert").addClass("text-success").text("");
+                    swal.close();
                     $("#addcatModel").modal('hide');
                     $("#cat-form-add")[0].reset();
                     loadCategory();
@@ -299,7 +341,9 @@ function addcat(th) {
 //add brand
 
 function addbrand(th) {
-    let formdata = $("#cat-form-add").serialize();
+    
+    var formData = new FormData($('#cat-form-add')[0]);
+    formData.append("func", "addC");
     var name = document.getElementById("cat-form-add").elements["name"].value;
     if (typeof name === 'undefined' || name == '' || name.length == 0) {
         $("#addcatModel .modal-body form").append("<p>brand name is required</p>");
@@ -308,15 +352,18 @@ function addbrand(th) {
     $.ajax({
         type: "POST",
         url: baseurl + 'vendor/brandModel.php',
-        data: { func: 'addC', data: formdata },
+        data:  formData, 
+        cache : false,
+        processData: false,
+         contentType: false,
         success: function (response) {
             $("#cat-form-add")[0].reset();
-            $(".brandalert").text("Data saved").addClass("text-success");
+            swal("Data added successfully.");
             if (response == 1) {
                 setTimeout(() => {
                     $("#addbrandModel").modal('hide');
                     loadBrands();
-                    $(".brandalert").text("").addClass("text-success");
+                    swal.close();
                 }, 5000);
             }
         }
@@ -331,9 +378,10 @@ function delcat() {
         url: baseurl + 'vendor/catModel.php',
         data: { func: 'delC', data: id },
         success: function (response) {
+            swal("Data deleted successfully.");
             if (response == 1) {
                 setTimeout(() => {
-
+                 swal.close();
                     loadCategory();
                 }, 2000);
 
@@ -352,8 +400,9 @@ function dellink() {
         data: { func: 'delL', data: id },
         success: function (response) {
             if (response == 1) {
+                swal("Data deleted successfully.");
                 setTimeout(() => {
-
+swal.close();
                     loadLinks();
                 }, 2000);
 
@@ -372,8 +421,9 @@ function delProd() {
         data: { func: 'delC', data: id },
         success: function (response) {
             if (response == 1) {
+                swal("Data deleted successfully.");
                 setTimeout(() => {
-
+swal.close();
                     loadProduct();
                 }, 2000);
 
@@ -393,8 +443,10 @@ function delbrand() {
         data: { func: 'delC', data: id },
         success: function (response) {
             if (response == 1) {
-                setTimeout(() => {
+                swal("Data deleted successfully.");
 
+                setTimeout(() => {
+                    swal.close();
                     loadBrands();
                 }, 2000);
 
@@ -414,9 +466,10 @@ function delpost() {
         url: baseurl + 'vendor/blogModel.php',
         data: { func: 'delC', data: id },
         success: function (response) {
+            swal("Post deleted successfully.")
             if (response == 1) {
                 setTimeout(() => {
-
+                  swal.close();
                     loadBlog();
                 }, 2000);
 
@@ -615,10 +668,6 @@ $('#fileupload').validate({
             number: false
         },
         
-        product_name: {
-            required: true,
-            number: false
-        },
         product_categories: {
             required: true,
 
@@ -641,7 +690,7 @@ $('#fileupload').validate({
         },
         ex_showroom_rpice: {
             required: true,
-            number: true
+            
         },
         test_upload: {
         required: true,
@@ -662,12 +711,12 @@ $('#fileupload').validate({
 
 //custom.js
 
-function searchlink(v){
+function searchlink(v,i){
     if(v.length>2){
         $.ajax({
             type: "POST",
             url: baseurl + 'vendor/linkmodel.php',
-            data: { func: 'searchLinks', val:v },
+            data: { func: 'searchLinks', val:v,n:i },
             success: function (response) {
                 $(".linkresult").html(response);
     
@@ -678,27 +727,27 @@ function searchlink(v){
     }
 }
 
-function feedit(id){
+function feedit(id,n){
     let s= $("#"+id).attr("data-id");
     let slug= $("#"+id).attr("data-slug");
     let type= $("#"+id).attr("data-type");
      let t=$("#"+id).text();
-     $("#searchtxtid").val("");
+     $("#searchtxtid"+n).val("");
       let t1=t.split("(");
-     $("#addlinktitle").val(t1[0]);
+     $("#addlinktitle"+n).val(t1[0]);
      $(".ltype").text("("+t1[1].trim().slice(0, -1)+")");
-     $("#ltype").val(t1[1].trim().slice(0, -1));
+     $("#ltype"+n).val(t1[1].trim().slice(0, -1));
      var link="";
      if(type=="Product"){
-         link=baseurl+"shop-ev.php?product="+slug;
+         link=baseurl+"Shop-ev.php?product="+slug;
      }else if(type=="Product"){
-         link=baseurl+"shop-ev.php?product="+slug;
+         link=baseurl+"Shop-ev.php?product="+slug;
      }else if(type=="Brand"){
-        link=baseurl+"shop-ev.php?brand="+slug;
+        link=baseurl+"Shop-ev.php?brand="+slug;
     }else{
-        link=baseurl+"shop-ev.php?cat="+slug;
+        link=baseurl+"Shop-ev.php?cat="+slug;
      }
-     $("#custlink").val(link);
+     $("#custlink"+n).val(link);
      $(".linkresult").html("");
  }
 
@@ -713,10 +762,33 @@ function feedit(id){
         }).then(resonse =>resonse).then(res=>{
                
             
-                $(".catalert").addClass("text-success").text("Data saved successfully");
+                swal("Data saved successfully");
                 setTimeout(() => {
-                    $(".catalert").addClass("text-success").text("");
+                    swal.close();
                     $("#addLinkModel").modal('hide');
+                    loadLinks();
+                }, 5000);
+
+
+            
+        }).catch(err => {
+            console.log(err);
+        });
+ }
+
+
+ function updateLink(th){
+    var formData = new FormData($('#link-form-edit')[0]);
+    formData.append("func", "updateL");
+    fetch(baseurl + 'vendor/linkmodel.php',
+        {
+            method: 'POST',
+            body: formData
+        }).then(resonse =>resonse).then(res=>{
+            swal("Data saved successfully");
+                setTimeout(() => {
+                    swal.close();
+                    $("#editlinkspopup").modal('hide');
                     loadLinks();
                 }, 5000);
 
@@ -754,4 +826,160 @@ function feedit(id){
              
         }
     });
+
  }
+
+ function showLinkEditForm(id){
+    $.ajax({
+        type: "POST",
+        url: baseurl + 'vendor/linkmodel.php',
+        data: { func: 'editL', val:id },
+        success: function (response) {
+            var res=JSON.parse(response);
+              $("#custlink2").val(res.url);
+              $("#addlinktitle2").val(res.title);
+              $("#custlink2").val(res.url);
+              $("#parentlink2 option").each(function(){
+                 if($(this).val()===res.parent && res.parent!=0){
+                    $(this).attr("selected",'selected');
+                 }
+              });
+              $("#linkid").val(res.id);
+            $("#order2").val(res.linkorder);
+            $("#editlinkspopup").modal('show');
+        }
+    });
+    
+ }
+
+
+ function showloceditform(id){
+    $.ajax({
+        type: "POST",
+        url: baseurl + 'vendor/clocsModel.php',
+        data: { func: 'editLoc', val:id },
+        success: function (response) {
+            var res=JSON.parse(response);
+              $("#locname").val(res.loc_title);
+              $("#locaddress").val(res.address);
+            
+              $("#locstate option").each(function(){
+                 if($(this).val()===res.state){
+                    $(this).attr("selected",'selected');
+                 }
+              });
+              $("#locid").val(id);
+              $("#locstate").trigger("change");
+              $("#loclink").val(res.map);
+             setTimeout(() => {
+                $("#loccity option").each(function(){
+                    if($(this).val()===res.city){
+                       $(this).attr("selected",'selected');
+                    }
+                 });
+             }, 2000);
+            $("#editclocspopup").modal('show');
+        }
+    });
+    
+ }
+
+
+ //cities
+
+ function selectCity(v,i) {
+    $.ajax({
+        type: "POST",
+        url: baseurl + 'vendor/quotesModel.php',
+        data: { func: 'cities', data: v },
+        success: function (response) {
+        
+            $("#"+i).html(response);
+            
+        }
+    });
+}
+
+
+function addStations(th){
+    var formData = new FormData($('#addStations')[0]);
+    formData.append("func", "addLoc");
+    fetch(baseurl + 'vendor/clocsModel.php',
+        {
+            method: 'POST',
+            body: formData
+        }).then(resonse =>resonse).then(res=>{
+               
+            
+                swal("Data saved successfully");
+                setTimeout(() => {
+                    swal.close();
+                    $("#addChargingModel").modal('hide');
+                    loadClocations();
+                }, 5000);
+
+
+            
+        }).catch(err => {
+            console.log(err);
+        });
+
+}
+
+
+function updateLoc(th){
+    var formData = new FormData($('#updateStations')[0]);
+    formData.append("func", "updateLoc");
+    fetch(baseurl + 'vendor/clocsModel.php',
+        {
+            method: 'POST',
+            body: formData
+        }).then(resonse =>resonse).then(res=>{
+               
+            
+                swal("Data saved successfully");
+                setTimeout(() => {
+                    swal.close();
+                    $("#editclocspopup").modal('hide');
+                    loadClocations();
+                }, 5000);
+
+
+            
+        }).catch(err => {
+            console.log(err);
+        });
+
+}
+
+
+function showDelLoc(id){
+    swal({
+        title: "Are you sure?",
+        text: "Do you want to delete it!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      })
+      .then((willDelete) => {
+        $.ajax({
+            type: "POST",
+            url: baseurl + 'vendor/clocsModel.php',
+            data: { func: 'delLoc', data: id },
+            success: function (response) {
+                
+                if (response == 1) {
+                    swal("Location has been deleted!", {
+                        icon: "success",
+                      });
+                    setTimeout(() => {
+                      swal.close();
+                        loadBlog();
+                    }, 2000);
+    
+                }
+            }
+        });
+        
+      });
+}

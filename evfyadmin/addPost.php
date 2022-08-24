@@ -1,14 +1,12 @@
 <?php require_once("header.php"); ?>
 <?php
+$edit=false;
 $id = isset($_GET['id']) ? $_GET['id'] : null;
-$edit = false;
-$cats = DB::query("SELECT * FROM blog_category WHERE type=1 order by posted desc");
-if ($id != null) {
-    $edit = true;
-    $blog = DB::query("select * from posts where id=$id");
-    $blog = $blog[0];
+if($id!=null){
+    $post=DB::query("select * from posts where id=%i",$id);
+    $edit=true;
+    $blog=$post[0];
 }
-
 ?>
 <style>
     .btn:focus,
@@ -46,22 +44,7 @@ if ($id != null) {
                             <input type="text" class="form-control" value="<?php echo isset($blog['title']) ? $blog['title'] : ''; ?>" id="bpostname" placeholder="Enter title" name="title" onblur="blogslug(this.value);">
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label class="control-label col-sm-2" for="lname">Post Category:</label>
-                        <div class="col-sm-10">
-                            <select class="form-control" name="blogcat" id="catblog">
-                                <option value="0">Uncategorized</option>
-                                <?php if (count($cats) > 0) {
-                                    foreach ($cats as $cat) {
-                                ?>
-                                        <option value="<?php echo $cat['id'] ?>" <?php echo ($cat['id'] == $blog['category_ids']) ? 'selected' : ''; ?>><?php echo $cat['category']; ?></option>
-
-                                <?php }
-                                } ?>
-
-                            </select>
-                        </div>
-                    </div>
+                    
                     <?php
                     if ($edit == true) {
                     ?>
@@ -87,7 +70,12 @@ if ($id != null) {
                             </div>
                         </div>
                     </div>
-
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="email">Meta description:</label>
+                        <div class="col-sm-10">
+                            <input type="text"  class="form-control" value="<?php echo isset($blog['meta']) ? $blog['meta'] : ''; ?>" id="meta" placeholder="meta" name="meta">
+                        </div>
+                    </div>
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10">
                             <button type="submit" name="submit-post" value="<?php echo $edit == true ? 'edit' : 'add'; ?>" class="btn btn-primary">Submit</button>
@@ -101,27 +89,6 @@ if ($id != null) {
 
 </div>
 </div>
-<!-- End of Main Content -->
-<div class="modal fade" tabindex="-1" role="dialog" id="editcatspopup">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Edit Category</h4>
-                <button type="button" class="close" style="float:right;" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            </div>
-            <div class="modal-body">
-                <form id="cat-form">
-
-                </form>
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
 
 <div class="modal fade" tabindex="-1" role="dialog" id="deletecatspopup">
     <div class="modal-dialog" role="document">
@@ -141,58 +108,15 @@ if ($id != null) {
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<!-- Footer -->
-<div class="modal fade" id="image-gallery" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="image-gallery-title"></h4>
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <img id="image-gallery-image" class="img-responsive col-md-12" src="">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary float-left" id="show-previous-image"><i class="fa fa-arrow-left"></i>
-                </button>
 
-                <button type="button" id="show-next-image" class="btn btn-secondary float-right"><i class="fa fa-arrow-right"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- view model -->
-
-<!-- Modal -->
-<div class="modal" id="prodviewModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-
-        </div>
-    </div>
-</div>
-<!-- fim Modal-->
-<script src="https://cdn.tiny.cloud/1/4ot0e0i9cw0ytt2epho0unod9mztur57rinkz1yo7byoxatz/tinymce/6/tinymce.min.js"></script>
+<script src="https://cdn.ckeditor.com/ckeditor5/28.0.0/classic/ckeditor.js">
+</script>
 <script>
-    tinymce.init({
-        selector: 'textarea',
-        height: 500,
-        menubar: false,
-        plugins: [
-            'a11ychecker', 'advlist', 'advcode', 'advtable', 'autolink', 'checklist', 'export',
-            'lists', 'link', 'image', 'charmap', 'preview', 'anchor', 'searchreplace', 'visualblocks',
-            'powerpaste', 'fullscreen', 'formatpainter', 'insertdatetime', 'media', 'table', 'help', 'wordcount'
-        ],
-        toolbar: 'undo redo | formatpainter casechange blocks | bold italic backcolor | ' +
-            'alignleft aligncenter alignright alignjustify | ' +
-            'bullist numlist checklist outdent indent | removeformat | a11ycheck code table help',
+ClassicEditor.create(document.querySelector("textarea"));
 
-        valid_elements: '*[*]',
-        content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
-    });
-
+                </script>
+<script>
+   
     window.addEventListener('load', function() {
         loadBlog();
         document.title = "Create blog posts";

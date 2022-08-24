@@ -2,6 +2,7 @@
 session_start();
 error_reporting(0);
 include('includes/config.php');
+include('.../vendor/dbconnect.php');
 if (strlen($_SESSION['alogin']) == 0) {
 	header('location:index.php');
 } else {
@@ -20,15 +21,23 @@ if (strlen($_SESSION['alogin']) == 0) {
 		$idedit = $_POST['editid'];
 		$image = $_POST['image'];
 
+		$address = $_POST['address'];
+		$state = $_POST['state'];
+		$city = $_POST['city'];
+		$zip = $_POST['zip'];
 		if (move_uploaded_file($file_loc, $folder . $final_file)) {
 			$image = $final_file;
 		}
 
-		$sql = "UPDATE users SET name=(:name), email=(:email), mobile=(:mobileno), designation=(:designation), Image=(:image) WHERE id=(:idedit)";
+		$sql = "UPDATE users SET name=(:name), email=(:email), mobile=(:mobileno), designation=(:designation), address=(:address),zip=(:zip),city=(:city),state=(:state),Image=(:image) WHERE id=(:idedit)";
 		$query = $dbh->prepare($sql);
 		$query->bindParam(':name', $name, PDO::PARAM_STR);
 		$query->bindParam(':email', $email, PDO::PARAM_STR);
 		$query->bindParam(':mobileno', $mobileno, PDO::PARAM_STR);
+		$query->bindParam(':address', $address, PDO::PARAM_STR);
+		$query->bindParam(':zip', $zip, PDO::PARAM_STR);
+		$query->bindParam(':city', $city, PDO::PARAM_STR);
+		$query->bindParam(':state', $state, PDO::PARAM_STR);
 		$query->bindParam(':image', $image, PDO::PARAM_STR);
 		$query->bindParam(':idedit', $idedit, PDO::PARAM_STR);
 		$query->execute();
@@ -145,7 +154,30 @@ if (strlen($_SESSION['alogin']) == 0) {
 													<div class="col-sm-4">
 														<input type="text" name="mobile" class="form-control" required value="<?php echo htmlentities($result->mobile); ?>">
 													</div>
-
+		                                            </div>
+													<div class="form-group">
+													<label class="col-sm-2 control-label">Address<span style="color:red">*</span></label>
+													<div class="col-sm-4">
+														<input type="text" name="mobile" class="form-control" required value="<?php echo htmlentities($result->address); ?>">
+													</div>
+		                                             </div>
+													
+													<div class="form-group">
+													<label class="col-sm-2 control-label">State<span style="color:red">*</span></label>
+													<div class="col-sm-4">
+														<input type="text" name="mobile" class="form-control" required value="<?php echo htmlentities($result->mobile); ?>">
+													</div>
+													<div class="form-group">
+													<label class="col-sm-2 control-label">City<span style="color:red">*</span></label>
+													<div class="col-sm-4">
+														<input type="text" name="city" class="form-control" required value="<?php echo htmlentities($result->mobile); ?>">
+													</div>
+		                                         </div>
+													<div class="form-group">
+													<label class="col-sm-2 control-label">Zip<span style="color:red">*</span></label>
+													<div class="col-sm-4">
+														<input type="text" name="zip" class="form-control" required value="<?php echo htmlentities($result->zip); ?>">
+													</div>
 
 												</div>
 												<input type="hidden" name="editid" class="form-control" required value="<?php echo htmlentities($result->id); ?>">

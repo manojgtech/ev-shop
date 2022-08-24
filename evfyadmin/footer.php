@@ -60,7 +60,8 @@
     
     <script src="../assets/js/jquery.validate.min.js"></script>
      <script src="../assets/blueimp/js/fileinput.min.js"></script>
-    <script src="js/custom.js"></script>
+     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+     <script src="js/custom.js"></script>
 
     <script src="../assets/blueimp/js/plugins/piexif.js" type="text/javascript"></script>
     <script src="../assets/blueimp/js/plugins/sortable.js" type="text/javascript"></script>

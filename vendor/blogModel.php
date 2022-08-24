@@ -50,7 +50,7 @@ function editBrand()
 
 function viewCategory()
 {
-    $results1 = DB::query("SELECT * from posts left join blog_category on posts.category_ids=blog_category.id order by created_at desc");
+    $results1 = DB::query("SELECT * from posts order by created_at desc");
 
 ?>
     <?php if (!empty($results1)) { ?>
@@ -59,7 +59,7 @@ function viewCategory()
                 <tr>
                     <th><input type="checkbox" name="allcats" id="allids" onclick="checkAll(this.id);" /></th>
                     <th>Title</th>
-                    <th>Category</th>
+                    <th>Meta</th>
                     <th>Datetime</th>
                     <th>Actions</th>
                 </tr>
@@ -68,7 +68,7 @@ function viewCategory()
                 <tr>
                     <th><input type="checkbox" name="allcats" id="allids1" onclick="checkAll(this.id);" /></th>
                     <th>Title</th>
-                    <th>Category</th>
+                    <th>Meta</th>
                     <th>Datetime</th>
                     <th>Actions</th>
                 </tr>
@@ -78,7 +78,7 @@ function viewCategory()
                     <tr id="row_<?php echo $row['id']; ?>" data-id="<?php echo $row['id']; ?>">
                         <td><input type="checkbox" name="allcats" class="pids" id="check_<?php echo $row['id']; ?>" data-id="<?php echo $row['Id']; ?>" onclick="chechThisc(<?php echo $row['id']; ?>,this.id);" /></td>
                         <td><?php echo $row['title']; ?></td>
-                        <td><?php echo $row['category']; ?></td>
+                        <td><?php echo $row['meta']; ?></td>
                         <td><?php echo $row['created_at']; ?></td>
                         <td><a href="addPost.php?id=<?php echo $row['id']; ?>"><i class="fa fa-edit" data-id="<?php echo $row['id']; ?>" onclick="showEditbrandForm(<?php echo $row['id']; ?>);"></i></a>&nbsp;|&nbsp;<i class="fa fa-trash" data-id="<?php echo $row['id']; ?>" onclick="showPostdelAlert(<?php echo $row['id']; ?>);"></i></td>
                     </tr>

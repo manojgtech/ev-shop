@@ -170,7 +170,7 @@
                         </ul>
                         <?php $states = DB::query("select id,name from states"); ?>
                         <div class="form-group">
-                            <select class="form-control" onchange="selectCity(this.value);">
+                            <select class="form-control cstateslist" onchange="selectCity(this.value);">
                                 <option>Select State</option>
                                 <?php if (count($states) > 0) {
                                     foreach ($states as $state) {
@@ -181,113 +181,40 @@
                                 ?>
                             </select>
                         </div>
+                        <?php $cities=DB::query("select * from cities where state_id=23 or state_id=25 ");
 
+?>
                         <div class="form-group">
-                            <select class="form-control" id="chargingcities" onchange="showstations(this.value);">
+                            <select class="form-control cstateslist" id="chargingcities" class="cstateslist" onchange="showstations(this.value);">
                                 <option>Select City</option>
-                                <option>New Delhi</option>
-                                <option>UP</option>
-                                <option>Jharkhand</option>
+                               <?php foreach($cities as $city){ ?>
+                            <option value="<?php echo $city['id']; ?>"><?php echo $city['city']; ?></option>
+                                <?php } ?>
                             </select>
                         </div>
-
+                     
                         <p class="resultheading">Results For Charging Stations:</p>
                     </form>
+                    <?php $clocs=DB::query("select * from charging_locations where state=25"); ?>
                     <div class="row maonoutercharginglocationresult">
+                       
+                         <?php foreach($clocs as $loc){ ?>
                         <div class="col-md-12 col-xs-12 col-lg-12 mapresultsection">
-                            <h4>Ather Space - Janakpuri</h4>
-                            <p>Ground floor, BF-1, Janakpuri, Jail Road, New Delhi 110058</p>
+                            <h4><?php echo $loc['loc_title']; ?></h4>
+                            <p><?php echo $loc['address']; ?></p>
                             <ul>
-                                <li><a href="">View On Map</a></li>
-                                <li><a href="">Get Direction</a></li>
+                                <li><a  data-href="<?php echo urlencode($city['address']); ?>" onclick="ShowMapUrl(this);">View On Map</a></li>
+                                <li><a data-lat="<?php echo $city['lat']; ?>" data-lang="<?php echo $city['lang']; ?>"  onclick="showdir(this);">Get Direction</a></li>
                             </ul>
                         </div>
+                        <?php }
+                        ?>
 
-                        <div class="col-md-12 col-xs-12 col-lg-12 mapresultsection">
-                            <h4>Ather Space - Janakpuri</h4>
-                            <p>Ground floor, BF-1, Janakpuri, Jail Road, New Delhi 110058</p>
-                            <ul>
-                                <li><a href="">View On Map</a></li>
-                                <li><a href="">Get Direction</a></li>
-                            </ul>
-                        </div>
-
-                        <div class="col-md-12 col-xs-12 col-lg-12 mapresultsection">
-                            <h4>Ather Space - Janakpuri</h4>
-                            <p>Ground floor, BF-1, Janakpuri, Jail Road, New Delhi 110058</p>
-                            <ul>
-                                <li><a href="">View On Map</a></li>
-                                <li><a href="">Get Direction</a></li>
-                            </ul>
-                        </div>
-
-                        <div class="col-md-12 col-xs-12 col-lg-12 mapresultsection">
-                            <h4>Ather Space - Janakpuri</h4>
-                            <p>Ground floor, BF-1, Janakpuri, Jail Road, New Delhi 110058</p>
-                            <ul>
-                                <li><a href="">View On Map</a></li>
-                                <li><a href="">Get Direction</a></li>
-                            </ul>
-                        </div>
-
-                        <div class="col-md-12 col-xs-12 col-lg-12 mapresultsection">
-                            <h4>Ather Space - Janakpuri</h4>
-                            <p>Ground floor, BF-1, Janakpuri, Jail Road, New Delhi 110058</p>
-                            <ul>
-                                <li><a href="">View On Map</a></li>
-                                <li><a href="">Get Direction</a></li>
-                            </ul>
-                        </div>
-
-                        <div class="col-md-12 col-xs-12 col-lg-12 mapresultsection">
-                            <h4>Ather Space - Janakpuri</h4>
-                            <p>Ground floor, BF-1, Janakpuri, Jail Road, New Delhi 110058</p>
-                            <ul>
-                                <li><a href="">View On Map</a></li>
-                                <li><a href="">Get Direction</a></li>
-                            </ul>
-                        </div>
-
-                        <div class="col-md-12 col-xs-12 col-lg-12 mapresultsection">
-                            <h4>Ather Space - Janakpuri</h4>
-                            <p>Ground floor, BF-1, Janakpuri, Jail Road, New Delhi 110058</p>
-                            <ul>
-                                <li><a href="">View On Map</a></li>
-                                <li><a href="">Get Direction</a></li>
-                            </ul>
-                        </div>
-
-                        <div class="col-md-12 col-xs-12 col-lg-12 mapresultsection">
-                            <h4>Ather Space - Janakpuri</h4>
-                            <p>Ground floor, BF-1, Janakpuri, Jail Road, New Delhi 110058</p>
-                            <ul>
-                                <li><a href="">View On Map</a></li>
-                                <li><a href="">Get Direction</a></li>
-                            </ul>
-                        </div>
-
-                        <div class="col-md-12 col-xs-12 col-lg-12 mapresultsection">
-                            <h4>Ather Space - Janakpuri</h4>
-                            <p>Ground floor, BF-1, Janakpuri, Jail Road, New Delhi 110058</p>
-                            <ul>
-                                <li><a href="">View On Map</a></li>
-                                <li><a href="">Get Direction</a></li>
-                            </ul>
-                        </div>
-
-                        <div class="col-md-12 col-xs-12 col-lg-12 mapresultsection">
-                            <h4>Ather Space - Janakpuri</h4>
-                            <p>Ground floor, BF-1, Janakpuri, Jail Road, New Delhi 110058</p>
-                            <ul>
-                                <li><a href="">View On Map</a></li>
-                                <li><a href="">Get Direction</a></li>
-                            </ul>
-                        </div>
                     </div>
                 </div>
 
                 <div class="col-md-9 col-lg-9 col-xs-12 locationmapcolumn">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d8916700.654699026!2d74.22871986107963!3d23.419187681009223!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce38d3244cf95%3A0x58beff53e6c81c4f!2sEESL%20Charging%20Station!5e0!3m2!1sen!2sin!4v1640347095591!5m2!1sen!2sin" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d8916700.654699026!2d74.22871986107963!3d23.419187681009223!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce38d3244cf95%3A0x58beff53e6c81c4f!2sEESL%20Charging%20Station!5e0!3m2!1sen!2sin!4v1640347095591!5m2!1sen!2sin" width="600" height="450" id="mapframe" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                 </div>
             </div>
         </div>
@@ -354,6 +281,16 @@
 
 
     <?php include 'include/script.php'; ?>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+
+$(document).ready(function() {
+$('.cstateslist').select2();
+});
+
+
+    </script>
 </body>
 
 

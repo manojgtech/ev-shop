@@ -1,24 +1,36 @@
-<div class="col-lg-4 col-md-12">
+<div class="col-lg-4 col-md-12 allpagerightsidebar">
     <aside class="widget-area">
 
         <?php
         $catss = DB::query("SELECT id,slug ,name, (select count(*) from products where category_id=vehicles.id ) as prod FROM `vehicles` WHERE status=1");
         ?>
         <section class="widget widget_categories">
-            <h3 class="widget-title">Product Categories</h3>
+            
+            
+            
+<aside id="filters">
+<div id="cattype">
+<h1>Product Categories</h1>
+<div class="bump">
+<?php 
+ $pccat=isset($_GET['cat']) ? urldecode(htmlspecialchars_decode($_GET['cat'])) :'';
+if (count($catss) > 0) {
+foreach ($catss as $cat) {
+?>
+<div class="box1">
+<input type="checkbox" <?php echo ($pccat==$cat['slug']) ? 'checked':'';  ?> name="pcatid" id="pc<?php echo $cat['id']; ?>"   class="pcatids" value="<?php echo $cat['id']; ?>">
+<label for="pc<?php echo $cat['id']; ?>" class="check-box"></label>
+<h4><?php echo $cat['name']; ?>(<?php echo $cat['prod'];  ?>)</h4>
+</div>
+<?php
 
-            <ul>
-                <?php if (count($catss) > 0) {
-                    foreach ($catss as $cat) {
-                ?>
-                        <li><a onclick="filterProd('<?php echo $cat['slug']; ?>','cat','l');"><?php echo $cat['name']; ?> <span class="post-count">(<?php echo $cat['prod']; ?>)</span></a></li>
-                <?php
+     }
+}
+?>
 
-                    }
-                }
-                ?>
-            </ul>
-        </section>
+</div>
+</div>
+</aside>
 
         <section class="widget widget_categories rightsidebarproductfilter">
             <h3 class="widget-title">Product Range</h3>
@@ -26,7 +38,7 @@
             <div class="price-range-slider">
 
                 <p class="range-value">
-                    <input type="text" id="amount" onchange="filterProd(this.value,'price','l');" readonly>
+                    <input type="text" id="amount" onchange="filterProd();" readonly>
                 </p>
                 <div id="slider-range" class="range-bar"></div>
 
@@ -35,28 +47,67 @@
 
 
         <section class="widget widget_categories" style="margin-top:30%;">
-            <h3 class="widget-title">Battery Type</h3>
-
+            
+            
+            
+<aside id="filters">
+<div id="battery_type">
+<h1>Battery Type</h1>
+<div class="bump">
+<?php
+        $bprods= DB::query("SELECT battery , (select count(*) from products  where prd.battery=battery ) as prod FROM `products` as prd  WHERE status=1 group by prd.battery ");
+        
+        ?>
             <ul>
-                <li><a href="#">Lithium-Ion (Li-On) <span class="post-count">(05)</span></a></li>
-                <li><a href="#">Nicle-Metal Hybrid (NiMH) <span class="post-count">(03)</span></a></li>
-                <li><a href="#">Lead Acid (SLA) <span class="post-count">(07)</span></a></li>
-                <li><a href="#">Ultracapacitor <span class="post-count">(10)</span></a></li>
-                <li><a href="#">Zebra (Zero Emissions Batteries Research Activity) <span class="post-count">(1)</span></a></li>
-            </ul>
+                <?php if(count($bprods)){
+                    $i=1;
+                  foreach($bprods as $prod){    
+                ?>
+<div class="box1">
+<input type="checkbox"  id="bc<?php echo $i; ?>" value="<?php echo ucwords($prod['battery']); ?>">
+<label for="bc<?php echo $i; ?>" class="check-box"></label>
+<h4><?php echo ucwords($prod['battery']); ?>(<?php echo $prod['prod']; ?>)</h4>
+</div>
+<?php
+  $i++; }
+    }
+?>
+</div>
+</div>
+</aside>
+           
         </section>
 
 
         <section class="widget widget_categories">
-            <h3 class="widget-title">Charging Time</h3>
+            
+            
+<aside id="filters">
+<div id="charging_time">
+<h1>Charging Time</h1>
+<div class="bump">
+<?php
+        $bprods= DB::query("SELECT charging_time, (select count(*) from products where prd.charging_time=charging_time ) as prod FROM `products` as prd  WHERE status=1  group by prd.charging_time ");
+        
+        ?>
+<?php if(count($bprods)){
+     $i=1;
+    foreach($bprods as $prod){    
+    ?>
+<div class="box1">
+<input type="checkbox" id="ct<?php echo $i; ?>" value="<?php echo $prod['charging_time']; ?>">
+<label for="ct<?php echo $i; ?>" class="check-box"></label>
+<h4><?php echo $prod['charging_time']; ?></h4>
+</div>
+<?php  $i++; }
+    }
+?>
 
-            <ul>
-                <li><a href="#">3 Hours <span class="post-count">(02)</span></a></li>
-                <li><a href="#">2 Hours <span class="post-count">(03)</span></a></li>
-                <li><a href="#">1.5 Hours <span class="post-count">(06)</span></a></li>
-                <li><a href="#">4 Hours <span class="post-count">(1)</span></a></li>
-                <li><a href="#">5 Hours <span class="post-count">(02)</span></a></li>
-            </ul>
+</div>
+</div>
+</aside>
+            
+            
         </section>
 
 

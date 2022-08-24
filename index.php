@@ -3,6 +3,59 @@
 
 <?php include 'include/style.php'; ?>
 
+ <section class="escootersection topbestthreeproduct" id="upcomingevoutersection">
+        <div class="container">
+            <!--
+                    <div class="section-title text-left websiteheadingscolumn">
+                        <span class="sub-title">New EV Available</span>
+                            <h2 class="text-left">Upcoming Electric Vehicle</h2>
+                                <a href="#" class="default-btn"><i class='fa fa-eye icon-arrow before'></i><span class="label">View All Upcoming e-Scooters</span><i class="fa fa-car icon-arrow after"></i></a>
+                    </div>
+-->
+            <h2 class="ceterwebheading">Best Products</h2>
+            <div class="emptyspace"></div>
+            <div class="row">
+                <?php $bprods = DB::query("SELECT u.*, p.* FROM products AS u LEFT JOIN product_images AS p ON p.id = ( SELECT id FROM product_images AS p2 WHERE p2.product_id = u.id LIMIT 1 ) where u.best=1 ORDER BY RAND() limit 30;"); ?>
+                <div class="courses-slides-upcoming owl-carousel owl-theme">
+                    <?php if (count($bprods) > 0) {
+                        foreach ($bprods as $prod) {
+                    ?>
+                            <div class="single-courses-box without-box-shadow mb-30 ourelectriccarinnercolumn lowspeedevcolumn">
+                                <div class="courses-image">
+                                    <a href="product-details.php?product=<?php echo $prod['slug']; ?>" class="d-block"><img src="<?php echo $prod['path']; ?>" alt="image" style="height:270px !important;width:360px;"></a>
+                                    <div class="courses-tag">
+                                        <a href="product-details.php?product=<?php echo $prod['slug']; ?>" class="d-block"><?php echo $prod['title']; ?></a>
+                                    </div>
+                                </div>
+
+                                <div class="courses-content">
+                                    <h3><a href="product-details.php?product=<?php echo $prod['slug']; ?>" class="d-inline-block"><?php echo $prod['title']; ?></a></h3>
+                                    <div class="courses-box-footer">
+                                        <ul>
+                                            <li class="courses-price">
+                                                <i>Enquire Now</i>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="courses-rating">
+                                        <p><?php echo $prod['ex_showroom_price']; ?></p>
+                                    </div>
+
+                                    <div class="carlocation">
+                                        <label>Show price in my city</label>
+                                    </div>
+                                </div>
+                            </div>
+                    <?php }
+                    }
+                    ?>
+
+                </div>
+
+            </div>
+        </div>
+        </div>
+    </section>
 
 
 <body>
@@ -21,17 +74,11 @@
 
     <section class="escootersection topbestthreeproduct" id="upcomingevoutersection">
         <div class="container">
-            <!--
-                    <div class="section-title text-left websiteheadingscolumn">
-                        <span class="sub-title">New EV Available</span>
-                            <h2 class="text-left">Upcoming Electric Vehicle</h2>
-                                <a href="#" class="default-btn"><i class='fa fa-eye icon-arrow before'></i><span class="label">View All Upcoming e-Scooters</span><i class="fa fa-car icon-arrow after"></i></a>
-                    </div>
--->
+        
             <h2 class="ceterwebheading">Best Products</h2>
             <div class="emptyspace"></div>
             <div class="row">
-                <?php $bprods = DB::query("SELECT u.*, p.* FROM products AS u LEFT JOIN product_images AS p ON p.id = ( SELECT id FROM product_images AS p2 WHERE p2.product_id = u.id LIMIT 1 ) where u.best=1 order by created_at desc limit 10;"); ?>
+                <?php $bprods = DB::query("SELECT u.*, p.* FROM products AS u LEFT JOIN product_images AS p ON p.id = ( SELECT id FROM product_images AS p2 WHERE p2.product_id = u.id LIMIT 1 ) where u.best=1 ORDER BY RAND() limit 30;"); ?>
                 <div class="courses-slides-upcoming owl-carousel owl-theme">
                     <?php if (count($bprods) > 0) {
                         foreach ($bprods as $prod) {
@@ -165,8 +212,42 @@
     </section>
 -->
 
+<section class="popularbrandsection courses-area">
+        <div class="container">
 
-    <section class="popularbrandsection courses-area">
+            <div class="section-title text-left websiteheadingscolumn">
+                <span class="sub-title">Discover Electric e-Vehicle</span>
+                <h2 class="text-left">Best Brands Electric Vehicle</h2>
+                <a onclick="requestmodal1('requestmodal1',1);" class="default-btn"><i class='fa fa-eye icon-arrow before'></i><span class="label">Enquire Now</span><i class="fa fa-car icon-arrow after"></i></a>
+            </div>
+            <div class="emptyspace"></div>
+
+            <div class="row">
+
+
+<?php $brands=DB::query("select * from brands ");
+   if(count($brands)){
+       foreach($brands as $brand){
+?>
+                <div class="col-md-2 mostinnercolumn">
+                    <a href="Shop-ev.php?brand=<?php echo urlencode($brand['brand_name']); ?>">
+                        <img src="<?php echo $brand['logo']; ?>" alt="<?php echo $brand['brand_name']; ?>" title="<?php echo $brand['brand_name']; ?>">
+                        <label><?php echo $brand['brand_name']; ?></label>
+                    </a>
+                </div>
+            <?php } 
+              }
+            ?>
+
+              
+
+
+            </div>
+        </div>
+        <div id="particles-js-circle-bubble-4"></div>
+    </section>
+
+    <section class="popularbrandsection courses-area" style="display:none;">
         <div class="container">
 
             <div class="section-title text-left websiteheadingscolumn">
@@ -1525,10 +1606,11 @@
     <!-- End Testimonials Area -->
 
     <?php
-    $posts = DB::query("select * from posts order by created_at limit 6");
+    $posts = DB::query("select * from posts order by created_at limit 8");
 
 
     ?>
+
 
     <!-- Start Blog Area -->
     <section class="blog-area ourevnewsoutersection">
@@ -1540,14 +1622,18 @@
             </div>
 
             <div class="blog-slides owl-carousel owl-theme">
+                <?php $posts=DB::query("select * from posts  order by created_at desc limit 8");
+                 if(count($posts)>0){
+                     foreach($posts as $post){
+                ?>
                 <div class="single-blog-post mb-30">
                     <div class="post-image">
-                        <a href="#" class="d-block">
+                        <a href="post.php?post=<?php echo $post['slug']; ?>" class="d-block">
                             <img src="https://imgd.aeplcdn.com/1280x720/n/cw/ec/104705/right-side-view0.jpeg?isig=0&q=75" alt="image">
                         </a>
 
                         <div class="tag">
-                            <a href="#">E Bikes</a>
+                            <a href="blog.php?post=<?php echo urlencode($post['category']); ?>"><?php echo $post['category']; ?></a>
                         </div>
                     </div>
 
@@ -1555,115 +1641,20 @@
                         <ul class="post-meta">
                             <li class="post-author">
                                 <img src="assets/img/user1.jpg" class="d-inline-block rounded-circle mr-2" alt="image">
-                                By: <a href="#" class="d-inline-block">Steven Smith</a>
+                                By: <a href="post.php?post=<?php echo $post['slug']; ?>" class="d-inline-block">Admin</a>
                             </li>
-                            <li><a href="#">August 30, 2019</a></li>
+                            <li><a href="post.php?post=<?php echo $post['slug']; ?>"><?php echo date("d-m-Y",strtotime($post['created_at'])); ?></a></li>
                         </ul>
-                        <h3><a href="#" class="d-inline-block">Kawasaki��??s KTM 125 Duke rival updated for 2022</a></h3>
-                        <a href="#" class="read-more-btn">Read More <i class='fa fa-long-arrow-right'></i></a>
+                        <h3><a href="post.php?post=<?php echo $post['slug']; ?>" class="d-inline-block"><?php echo $post['title']; ?></a></h3>
+                        <a href="post.php?post=<?php echo $post['slug']; ?>" class="read-more-btn">Read More <i class='fa fa-long-arrow-right'></i></a>
                     </div>
                 </div>
-
-                <div class="single-blog-post mb-30">
-                    <div class="post-image">
-                        <a href="#" class="d-block">
-                            <img src="https://imgd.aeplcdn.com/1280x720/n/cw/ec/100617/ola-s1-right-front-three-quarter4.jpeg?isig=0&q=75" alt="image">
-                        </a>
-
-                        <div class="tag">
-                            <a href="#">E Scooters</a>
-                        </div>
-                    </div>
-
-                    <div class="post-content">
-                        <ul class="post-meta">
-                            <li class="post-author">
-                                <img src="assets/img/user2.jpg" class="d-inline-block rounded-circle mr-2" alt="image">
-                                By: <a href="#" class="d-inline-block">Lina D'Souja</a>
-                            </li>
-                            <li><a href="#">August 29, 2019</a></li>
-                        </ul>
-                        <h3><a href="#" class="d-inline-block">Ola S1 and S1 Pro electric scooter launched in India</a></h3>
-                        <a href="#" class="read-more-btn">Read More <i class='fa fa-long-arrow-right'></i></a>
-                    </div>
-                </div>
-
-                <div class="single-blog-post mb-30">
-                    <div class="post-image">
-                        <a href="#" class="d-block">
-                            <img src="https://imgd.aeplcdn.com/1280x720/n/cw/ec/103491/left-side-view1.jpeg?isig=0&q=75" alt="image">
-                        </a>
-
-                        <div class="tag">
-                            <a href="#">EV World</a>
-                        </div>
-                    </div>
-
-                    <div class="post-content">
-                        <ul class="post-meta">
-                            <li class="post-author">
-                                <img src="https://imgd.aeplcdn.com/1280x720/n/cw/ec/103293/left-side-view1.jpeg?isig=0&q=75" class="d-inline-block rounded-circle mr-2" alt="image">
-                                By: <a href="#" class="d-inline-block">David Malan</a>
-                            </li>
-                            <li><a href="#">August 28, 2019</a></li>
-                        </ul>
-                        <h3><a href="#" class="d-inline-block">Ola Electric scooters sales postponed due to technical</a></h3>
-                        <a href="#" class="read-more-btn">Read More <i class='fa fa-long-arrow-right'></i></a>
-                    </div>
-                </div>
-
-                <div class="single-blog-post mb-30">
-                    <div class="post-image">
-                        <a href="#" class="d-block">
-                            <img src="https://imgd.aeplcdn.com/1280x720/n/cw/ec/103293/left-side-view1.jpeg?isig=0&q=75" alt="image">
-                        </a>
-
-                        <div class="tag">
-                            <a href="#">EV News</a>
-                        </div>
-                    </div>
-
-                    <div class="post-content">
-                        <ul class="post-meta">
-                            <li class="post-author">
-                                <img src="assets/img/user5.jpg" class="d-inline-block rounded-circle mr-2" alt="image">
-                                By: <a href="#" class="d-inline-block">David Warner</a>
-                            </li>
-                            <li><a href="#">August 27, 2019</a></li>
-                        </ul>
-                        <h3><a href="#" class="d-inline-block">Ola S1 and S1 Pro electric scooter sales commence</a></h3>
-                        <a href="#" class="read-more-btn">Read More <i class='fa fa-long-arrow-right'></i></a>
-                    </div>
-                </div>
-
-                <div class="single-blog-post mb-30">
-                    <div class="post-image">
-                        <a href="#" class="d-block">
-                            <img src="https://imgd.aeplcdn.com/1280x720/n/cw/ec/103681/right-front-three-quarter2.jpeg?isig=0&q=75" alt="image">
-                        </a>
-
-                        <div class="tag">
-                            <a href="#">E Cars</a>
-                        </div>
-                    </div>
-
-                    <div class="post-content">
-                        <ul class="post-meta">
-                            <li class="post-author">
-                                <img src="assets/img/user6.jpg" class="d-inline-block rounded-circle mr-2" alt="image">
-                                By: <a href="#" class="d-inline-block">Olivar Waise</a>
-                            </li>
-                            <li><a href="#">August 26, 2019</a></li>
-                        </ul>
-                        <h3><a href="#" class="d-inline-block">Ola S1 and S1 Pro sales to reopen on 1 November</a></h3>
-                        <a href="#" class="read-more-btn">Read More <i class='fa fa-long-arrow-right'></i></a>
-                    </div>
-                </div>
+                   <?php }
+                 } ?>
+                
             </div>
         </div>
     </section>
-    <!-- End Blog Area -->
-
 
     <?php include 'include/footer.php'; ?>
 

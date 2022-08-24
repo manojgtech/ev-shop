@@ -39,6 +39,108 @@
         margin-bottom: 10px;
         margin-right: 10px;
     }
+    .details-card {
+	background: #ecf0f1;
+}
+
+.card-content {
+	background: #ffffff;
+	border: 4px;
+	box-shadow: 0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);
+}
+
+.card-img {
+	position: relative;
+	overflow: hidden;
+	border-radius: 0;
+	z-index: 1;
+}
+
+.card-img img {
+	width: 100%;
+	height: auto;
+	display: block;
+}
+
+.card-img span {
+	position: absolute;
+    top: 15%;
+    left: 12%;
+    background: #1ABC9C;
+    padding: 6px;
+    color: #fff;
+    font-size: 12px;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -ms-border-radius: 4px;
+    -o-border-radius: 4px;
+    transform: translate(-50%,-50%);
+}
+.card-img span h4{
+        font-size: 12px;
+        margin:0;
+        padding:10px 5px;
+         line-height: 0;
+}
+.card-desc {
+	padding: 1.25rem;
+}
+
+.card-desc h3 {
+	color: #000000;
+    font-weight: 600;
+    font-size: 1.5em;
+    line-height: 1.3em;
+    margin-top: 0;
+    margin-bottom: 5px;
+    padding: 0;
+}
+
+.card-desc p {
+	color: #747373;
+    font-size: 14px;
+	font-weight: 400;
+	font-size: 1em;
+	line-height: 1.5;
+	margin: 0px;
+	margin-bottom: 20px;
+	padding: 0;
+	font-family: 'Raleway', sans-serif;
+}
+.btn-card{
+	background-color: #1ABC9C;
+	color: #fff;
+	box-shadow: 0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);
+    padding: .84rem 2.14rem;
+    font-size: .81rem;
+    -webkit-transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,-webkit-box-shadow .15s ease-in-out;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,-webkit-box-shadow .15s ease-in-out;
+    -o-transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out,-webkit-box-shadow .15s ease-in-out;
+    margin: 0;
+    border: 0;
+    -webkit-border-radius: .125rem;
+    border-radius: .125rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    white-space: normal;
+    word-wrap: break-word;
+    color: #fff;
+}
+.btn-card:hover {
+    background: orange;
+}
+a.btn-card {
+    text-decoration: none;
+    color: #fff;
+}
+.card-img{
+    width:350px;
+    height:212px;
+}
+/* End card section */
 </style>
 
 <body>
@@ -53,7 +155,38 @@
 
     <?php include 'include/search-console.php'; ?>
 
-    <section class="courses-area" id="blogsect">
+    <section class="details-card">
+    <div class="container">
+        <div class="row">
+        <?php 
+                $where=isset($_GET['post']) ?  " where category like '%".urldecode(htmlspecialchars_decode($_GET['post']))."%' and status=1": 'where status=1';
+                $posts = DB::query("select * from posts $where order by created_at");
+                if (count($posts) > 0) {
+                    foreach ($posts as $post) {
+                ?>
+            <div class="col-md-4">
+                <div class="card-content">
+                    <div class="card-img">
+                        <img src="<?php echo $post['image']; ?>" alt="<?php echo $post['title']; ?>">
+                        <span><h4><?php echo $post['category']; ?></h4></span>
+                    </div>
+                    <div class="card-desc">
+                        <h3><?php echo $post['title']; ?></h3>
+                        <p> <?php echo substr(htmlspecialchars_decode($post['postbody']), 0, 200) . '...'; ?></p>
+                            <a href="post.php?post=<?php echo $post['slug']; ?>" class="btn-card">Read</a>   
+                    </div>
+                </div>
+            </div>
+            <?php }
+                }
+                ?>
+
+
+        </div>
+    </div>
+</section>
+<!-- details card section starts from here -->
+    <section class="courses-area" id="blogsect" style="display:none;">
         <div class="container">
             <div class="row">
                 <?php
@@ -65,13 +198,13 @@
                             <h1><?php echo $post['title']; ?></h1>
                             <img src="<?php echo $post['image']; ?>" alt="<?php echo $post['title']; ?>" class="pull-left img-responsive thumb margin10 img-thumbnail">
 
-                            <em>This snippet use <a href="post.php?post=<?php echo $post['slug']; ?>" target="_blank">Sexy Sidebar Navigation</a></em>
+                            <!-- <em><a href="post.php?post=<?php echo $post['slug']; ?>" target="_blank"><?php echo $post['title']; ?></a></em> -->
                             <article>
                                 <p>
                                     <?php echo substr(htmlspecialchars_decode($post['postbody']), 0, 200) . '...'; ?>
                                 </p>
                             </article>
-                            <a class="btn btn-blog pull-right marginBottom10" href="blog-post.php?post=<?php echo $post['slug']; ?>">READ MORE</a>
+                            <a class="btn btn-blog pull-right marginBottom10" href="post.php?post=<?php echo $post['slug']; ?>">READ MORE</a>
                         </div>
 
                 <?php }
@@ -200,6 +333,7 @@
 
 
     <!-- Start Courses Area -->
+    <!-- Start Courses Area -->
     <section class="courses-area ourelectriccarssection" id="TestSeries">
         <div class="container">
             <div class="section-title text-left websiteheadingscolumn">
@@ -207,66 +341,36 @@
                 <h2 class="text-left">Our EV categories</h2>
                 <a href="Shop-ev.php" class="default-btn"><i class='fa fa-eye icon-arrow before'></i><span class="label">View All EV</span><i class="fa fa-car icon-arrow after"></i></a>
             </div>
+            <?php
 
+            $catss = DB::query("SELECT id,slug ,name,image, (select count(*) from products where category_id=vehicles.id ) as prod FROM `vehicles` WHERE status=1");
+            $cimgs = ['assets/img/categories/1.jpg', 'assets/img/categories/2.jpg', 'assets/img/categories/3.jpg', 'assets/img/categories/4.jpg'];
+            ?>
             <div class="row">
 
+                <?php if (count($catss) > 0) {
+                    $i = 1;
+                    foreach ($catss as $cat) {
+                ?>
+                        <div class="col-lg-3 col-sm-6 col-md-3">
+                            <div class="single-categories-courses-item bg<?php echo $i; ?> mb-30 productcategoriescolumn" style="backgroung-image:url('<?php echo "assets/img/categories/" . $cat['image']; ?>');">
+                                <div class="icon">
+                                    <i class='bx bx-layer'></i>
+                                </div>
+                                <h3><?php echo $cat['name']; ?></h3>
+                                <span><?php echo $cat['prod']; ?> Products</span>
 
-                <div class="col-lg-3 col-sm-6 col-md-3">
-                    <div class="single-categories-courses-item bg3 mb-30 productcategoriescolumn">
-                        <div class="icon">
-                            <i class='bx bx-layer'></i>
+                                <a href="Shop-ev.php?cat=<?php echo urlencode($cat['slug']); ?>" class="learn-more-btn">Show All <i class='fa fa-long-arrow-right'></i></a>
+
+                                <a href="Shop-ev.php?cat=<?php echo urlencode($cat['slug']); ?>" class="link-btn"></a>
+                            </div>
                         </div>
-                        <h3>Personal Mobility</h3>
-                        <span>2 Products</span>
+                <?php $i++;
+                    }
+                }
+                ?>
 
-                        <a href="" class="learn-more-btn">Show All <i class='fa fa-long-arrow-right'></i></a>
 
-                        <a href="" class="link-btn"></a>
-                    </div>
-                </div>
-
-                <div class="col-lg-3 col-sm-6 col-md-3">
-                    <div class="single-categories-courses-item bg1 mb-30 productcategoriescolumn">
-                        <div class="icon">
-                            <i class='bx bx-code-alt'></i>
-                            <img src="assets/img/cycling.png">
-                        </div>
-                        <h3>E-Cycles</h3>
-                        <span>6 Products</span>
-
-                        <a href="kinetic-ecycle.php" class="learn-more-btn">Show All <i class='fa fa-long-arrow-right'></i></a>
-
-                        <a href="kinetic-ecycle.php" class="link-btn"></a>
-                    </div>
-                </div>
-
-                <div class="col-lg-3 col-sm-6 col-md-3">
-                    <div class="single-categories-courses-item bg2 mb-30 productcategoriescolumn">
-                        <div class="icon">
-                            <i class='bx bx-camera'></i>
-                        </div>
-                        <h3>Two Wheelers </h3>
-                        <span>10 Products</span>
-
-                        <a href="kinetic-two-wheelers.php" class="learn-more-btn">Show All <i class='fa fa-long-arrow-right'></i></a>
-
-                        <a href="kinetic-two-wheelers.php" class="link-btn"></a>
-                    </div>
-                </div>
-
-                <div class="col-lg-3 col-sm-6 col-md-3">
-                    <div class="single-categories-courses-item bg4 mb-30 productcategoriescolumn">
-                        <div class="icon">
-                            <i class='bx bx-layer'></i>
-                        </div>
-                        <h3>Four Wheelers</h3>
-                        <span>8 Products</span>
-
-                        <a href="kinetic-two-wheelers.php" class="learn-more-btn">Show All <i class='fa fa-long-arrow-right'></i></a>
-
-                        <a href="kinetic-two-wheelers.php" class="link-btn"></a>
-                    </div>
-                </div>
 
 
             </div>
@@ -274,6 +378,9 @@
         </div>
     </section>
     <!-- End Courses Area -->
+
+
+
 
 
 

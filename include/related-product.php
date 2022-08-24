@@ -1,22 +1,31 @@
+<?php 
 
+$slug=htmlspecialchars($_GET['product']);
+$rel_prods=DB::query("select *,vehicles.name from products join vehicles on vehicles.id=products.category_id  where category_id=(select category_id from products where slug=%s) limit 10",$slug);
+ 
+?>
 
 <section class="newupcomingoutersection" id="similarev">
         <h2 class="ceterwebheading">Related Products</h2>
         <div class="col-md-12 innercol12column">
             <div class="owl-carousel owl_carousel123">
-                
+                <?php 
+    if(count($rel_prods)>0){
+    foreach($rel_prods as $prod){
+      $img=DB::queryFirstRow("select path from product_images where product_id=%i",$prod['id']);
+    ?>
 <div class="item">
   
     <a href="e-cycle.php">
-        <img src="assets/img/upcoming-images/product1.jpg" alt="" />
+        <img src="<?php echo $img['path']; ?>" alt="<?php echo $prod['title']; ?>" />
     </a>
     <div class="exclusiveribbon">
         <span>Best Seller</span>
     </div>
   <div class="inner upcomingcontentcolumn">
     <span class="firstspantag">Sold 9 units in last 24 hours!</span>
-      <p>Super trendy and sporty! This E-Cycle can be your newest and most economical mode of transport. <strong></strong></p>
-      <ul class="upcomingfirstullist">
+      <p><?php echo  substr(htmlspecialchars_decode($prod['description']),0,100); ?> <strong></strong></p>
+      <ul class="upcomingfirstullist" display:none;>
             <li><i class="fa fa-flash"></i><span>30 Km*</span><label>Per Charge</label></li>
             <li><i class="fa fa-flash"></i><span>02 Years*</span><label>of Warranty</label></li>
             <li><i class="fa fa-flash"></i><span>5 Hours*</span><label>For Full Charge</label></li>
@@ -24,67 +33,14 @@
       </ul>
       <ul class="upcomingsecondullist">
 <!--            <li>MRP: <i class="fa fa-inr"></i> 34,099/-<span>price in your city</span><label>EMI available</label></li>-->
-          <li><a class="vechnamehead" href="e-cycle.php">Kinetic Kool E-Cycle<span>e-Cycle</span></a></li>
+          <li><a class="vechnamehead" href="e-cycle.php"><?php echo $prod['title']; ?><span><?php echo $prod['name'];  ?></span></a></li>
             <li><a class="buynowbuttonbike" href="#">Download Brochure</a></li>
             <li><a class="buynowbuttonbike" href="#">Enquire Now</a></li>
       </ul>
   </div>
   
 </div>
-                
-                
-<div class="item">
-    <a href="kinetic-zoom.php">
-        <img src="assets/img/upcoming-images/product2.jpg" alt="" />
-    </a>
- <div class="exclusiveribbon">
-        <span>Best Seller</span>
-    </div>
-  <div class="inner upcomingcontentcolumn">
-    <span class="firstspantag">Sold 9 units in last 24 hours!</span>
-      <p>Kinetic Zoom Electric scooter offers future-led design with its high-end features and technology.<strong></strong></p>
-      <ul class="upcomingfirstullist">
-            <li><i class="fa fa-flash"></i><span>100 Km*</span><label>Per Charge</label></li>
-            <li><i class="fa fa-flash"></i><span>03 Years*</span><label>of Warranty</label></li>
-            <li><i class="fa fa-flash"></i><span>3 Hours*</span><label>For Full Charge</label></li>
-            <li><i class="fa fa-flash"></i><span>60V 22Ah*</span><label>Battery</label></li>
-      </ul>
-      <ul class="upcomingsecondullist">
-<!--            <li>MRP: <i class="fa fa-inr"></i> 34,099/-<span>price in your city</span><label>EMI available</label></li>-->
-            <li><a class="vechnamehead" href="kinetic-zoom.php">Kinetic Zoom<span>Two Wheelers</span></a></li>
-            <li><a class="buynowbuttonbike" href="#">Download Brouchure</a></li>
-            <li><a class="buynowbuttonbike" href="#">Enquire Now</a></li>
-      </ul>
-  </div>
-  
-</div>
-                
-                
-<div class="item">
-    <a href="kinetic-zing.php">
-        <img src="assets/img/upcoming-images/product3.jpg" alt="" />
-    </a>
- <div class="exclusiveribbon">
-        <span>Popular Products</span>
-    </div>
-  <div class="inner upcomingcontentcolumn">
-    <span class="firstspantag">Sold 9 units in last 24 hours!</span>
-      <p>Pushback all your fuel worries with Kinetic Zing Electric Scooter. Simply charge and get going! <strong></strong></p>
-      <ul class="upcomingfirstullist">
-            <li><i class="fa fa-flash"></i><span>80 Km*</span><label>Per Charge</label></li>
-            <li><i class="fa fa-flash"></i><span>03 Years*</span><label>of Warranty</label></li>
-            <li><i class="fa fa-flash"></i><span>3 Hours*</span><label>For Full Charge</label></li>
-            <li><i class="fa fa-flash"></i><span>60V 22Ah*</span><label>Battery</label></li>
-      </ul>
-      <ul class="upcomingsecondullist">
-<!--            <li>MRP: <i class="fa fa-inr"></i> 34,099/-<span>price in your city</span><label>EMI available</label></li>-->
-            <li><a class="vechnamehead" href="kinetic-zing.php">Kinetic Zing<span>Two Wheelers</span></a></li>
-          <li><a class="buynowbuttonbike" href="#">Download Brouchure</a></li>
-            <li><a class="buynowbuttonbike" href="#">Enquire Now</a></li>
-      </ul>
-  </div>
-  
-</div>
+      <?php } } ?>          
                 
                 
 

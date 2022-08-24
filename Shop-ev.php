@@ -80,133 +80,7 @@
 
 
 
-            <div class="col-lg-12 col-md-12">
-              <div class="single-courses-list-box mb-30 innerproductlistcolumn">
-                <div class="box-item">
-                  <div class="courses-image">
-                    <div class="image bg-2">
-                      <img src="assets/img/cars/ki1.jpg" alt="image">
-
-                      <a href="product-details.php" class="link-btn"></a>
-
-                    </div>
-                  </div>
-
-                  <div class="courses-desc">
-                    <div class="courses-content productlistingdetails">
-
-                      <h3><a href="product-details.php" class="d-inline-block">Kinetic Zing</a></h3>
-
-                      <div class="courses-rating">
-                        <div class="review-stars-rated">
-                          <i class='fa fa-star'></i>
-                          <i class='fa fa-star'></i>
-                          <i class='fa fa-star'></i>
-                          <i class='fa fa-star'></i>
-                          <i class='fa fa-star'></i>
-                        </div>
-
-                        <div class="rating-total">
-                          5.0 (1 rating)
-                        </div>
-                      </div>
-
-                      <p>Pushback all your fuel worries with Kinetic Zing Electric Scooter. Simply charge and get going!</p>
-                      <ul class="upcomingfirstullist">
-                        <li><i class="fa fa-flash"></i><span>80 Km*</span><label>Per Charge</label></li>
-                        <li><i class="fa fa-flash"></i><span>03 Years*</span><label>of Warranty</label></li>
-                        <li><i class="fa fa-flash"></i><span>3 Hours*</span><label>Full Charge</label></li>
-                        <li><i class="fa fa-flash"></i><span>60V 22Ah*</span><label>Battery</label></li>
-                      </ul>
-                    </div>
-
-                    <div class="courses-box-footer listingpagecolumn">
-                      <ul>
-                        <li class="students-number">
-                          <a href="#">Enquire Now</a>
-                          <!--<i class='bx bx-user'></i> 10 students-->
-                        </li>
-
-                        <li class="courses-lesson">
-                          <!--<i class='bx bx-time'></i> 6 Hour-->
-                          <a href="#">Request a Call Back</a>
-                        </li>
-
-                        <!--
-<li class="courses-price">
-<i>₹</i>780
-</li>
--->
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-lg-12 col-md-12">
-              <div class="single-courses-list-box mb-30 innerproductlistcolumn">
-                <div class="box-item">
-                  <div class="courses-image">
-                    <div class="image bg-2">
-                      <img src="assets/img/cars/evfyscooter.jpg" alt="image">
-
-                      <a href="product-details.php" class="link-btn"></a>
-
-                    </div>
-                  </div>
-
-                  <div class="courses-desc">
-                    <div class="courses-content productlistingdetails">
-
-                      <h3><a href="product-details.php" class="d-inline-block">Kinetic Zoom</a></h3>
-
-                      <div class="courses-rating">
-                        <div class="review-stars-rated">
-                          <i class='fa fa-star'></i>
-                          <i class='fa fa-star'></i>
-                          <i class='fa fa-star'></i>
-                          <i class='fa fa-star'></i>
-                          <i class='fa fa-star'></i>
-                        </div>
-
-                        <div class="rating-total">
-                          5.0 (1 rating)
-                        </div>
-                      </div>
-
-                      <p>Kinetic Zoom Electric scooter offers future-led design with its high-end features and technology.</p>
-                      <ul class="upcomingfirstullist">
-                        <li><i class="fa fa-flash"></i><span>80 Km*</span><label>Per Charge</label></li>
-                        <li><i class="fa fa-flash"></i><span>03 Years*</span><label>of Warranty</label></li>
-                        <li><i class="fa fa-flash"></i><span>3 Hours*</span><label>Full Charge</label></li>
-                        <li><i class="fa fa-flash"></i><span>60V 22Ah*</span><label>Battery</label></li>
-                      </ul>
-                    </div>
-
-                    <div class="courses-box-footer listingpagecolumn">
-                      <ul>
-                        <li class="students-number">
-                          <a href="#">Enquire Now</a>
-                          <!--<i class='bx bx-user'></i> 10 students-->
-                        </li>
-
-                        <li class="courses-lesson">
-                          <!--<i class='bx bx-time'></i> 6 Hour-->
-                          <a href="#">Request a Call Back</a>
-                        </li>
-
-                        <!--
-<li class="courses-price">
-<i>₹</i>780
-</li>
--->
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            
 
 
 
@@ -288,54 +162,46 @@
     });
   </script>
 
+<?php 
 
+
+$page=1;
+if(isset($_GET['page'])){
+ $page=$_GET['page'];
+}
+?>
+<?php $prange=DB::queryFirstRow("select MIN(ex_showroom_price) as minp, MAX(ex_showroom_price) as maxp from products");
+ ?>
   <script>
+    localStorage.setItem("page",'<?php echo $page; ?>');
     //-----JS for Price Range slider-----
 
     $(function() {
       $("#slider-range").slider({
         range: true,
-        min: 130,
-        max: 500,
-        values: [130, 250],
+        min: parseFloat("<?php echo $prange['minp']; ?>".replace(/,/g, '')),
+        max: parseFloat("<?php echo $prange['maxp']; ?>".replace(/,/g, '')),
+        values: [1300, 2500000],
         slide: function(event, ui) {
-          $("#amount").val("$" + ui.values[0] + " - $" + ui.values[1]);
-          filterProd(ui.values[0] + ":" + ui.values[1],'price','l');
+          $("#amount").val("INR" + ui.values[0] + " - INR" + ui.values[1]);
+          filterProd();
         }
       });
-      $("#amount").val("$" + $("#slider-range").slider("values", 0) +
-        " - $" + $("#slider-range").slider("values", 1));
     });
+      
   </script>
   
-  <?php if ((isset($_GET['cat']) && !empty($_GET['cat']))|| (isset($_GET['brand']) && !empty($_GET['brand']))  ) {
-    $cat =  isset($_GET['cat']) ? htmlspecialchars(trim($_GET['cat'])) : htmlspecialchars(trim($_GET['brand']));
-    $fcat =  isset($_GET['cat']) ? 'cat' : 'brand';
-
-  ?>
-    <script>
-      window.addEventListener('load', function() {
-        filterProd('<?php echo $cat; ?>', '<?php echo $fcat; ?>', sortBy, order);
-        document.title = "Evfy Shop";
-        
-    
-
-      });
-
-    </script>
-  <?php } else { ?>
+  
+  
+ <input type="hidden" id="filterShopData" data-cat="<?php echo isset($_GET['cat']) ? urldecode(htmlspecialchars_decode($_GET['cat'])) :''; ?>" data-model="<?php echo isset($_GET['model']) ? urldecode(htmlspecialchars_decode($_GET['model'])) :''; ?>" data-brand="<?php echo isset($_GET['brand']) ? urldecode(htmlspecialchars_decode($_GET['brand'])) :''; ?>" data-page="<?php echo $page; ?>" >
     <script>
       window.addEventListener('load', function() {
         filterProd();
         document.title = "Evfy Shop";
-        const url = new URL(window.location);
-url.searchParams.set('filter', '');
-url.searchParams.set('type', '');
-url.searchParams.set('sortBy', 'l');
-window.history.pushState({}, '', url);
-document.getElementById('searchshop')
+        
+        
 
-    .addEventListener('keypress', function(event) {
+        document.getElementById('searchshop').addEventListener('keypress', function(event) {
         event.preventDefault();
         var key = event.charCode || event.keyCode || 0;     
         if (key == 13) {
@@ -345,38 +211,16 @@ document.getElementById('searchshop')
             var v=document.getElementById('searchshop').value;
             
             if(v.length>2){
-                filterProd(v,'search','l');  
-            }else{
-                filterProd();
+                filterProd();  
             }
         }
     });
     
       });
     </script>
-  <?php } ?>
 
-  <script>
-window.addEventListener('load', function() {
-document.getElementById('searchshop')
-    .addEventListener('keypress', function(event) {
-        event.preventDefault();
-        var key = event.charCode || event.keyCode || 0;     
-        if (key == 13) {
-        
-        
-            event.preventDefault();
-            var v=document.getElementById('searchshop').value;
-            
-            if(v.length>2){
-                filterProd(v,'search','l');  
-            }else{
-                filterProd();
-            }
-        }
-    });
-  });
-</script>
+
+  
 </body>
 
 </html>

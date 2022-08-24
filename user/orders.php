@@ -65,18 +65,21 @@ if (strlen($_SESSION['alogin']) == 0) {
         <?php
         try {
             $email = $_SESSION['aloginid'];
-            $sql = "SELECT * from orders where customer_id = (:email);";
+            $sql = "SELECT orders.*,products.title from orders left join products on products.id=orders.product_id where customer_id = (:email);";
             $query = $dbh->prepare($sql);
             $query->bindParam(':email', $email, PDO::PARAM_INT);
             $query->execute();
-            $result = $query->fetch(PDO::FETCH_OBJ);
+            $orders=[];
+            while($result = $query->fetch(PDO::FETCH_ASSOC)){
+                $orders[]=$result;
+            }
             $cnt = 1;
-            print_r($result);
+            
         } catch (PDOException $e) {
             echo 'Connection failed: ' . $e->getMessage();
             exit;
         }
-
+   $order_status=array("","Completed","Pending","Failed");
         ?>
         <?php include('includes/header.php'); ?>
         <div class="ts-main-content">
@@ -84,10 +87,49 @@ if (strlen($_SESSION['alogin']) == 0) {
             <div class="content-wrapper">
                 <div class="container-fluid">
                     <div class="row">
+                       
                         <div class="col-md-12">
-                            <?php
-                            print_r($result);
+                            <?php if(count($orders)>0){ ?>
+                           <table id="user-orders" class="table">
+                               <thead>
+                                   <tr>
+                                   <th>Sn</th>
+                                   <th>Order Id</th>
+                                   <th>Product</th>
+                                   <th>Amount</th>
+                                   <th>Quantity</th>
+                                   <th>Date</th>
+                                   <th>Payment Id</th>
+                                   <th>status</th>
+                                   
+                                   </tr>
+                               </thead>
+                               <tbody>
+                               <?php   foreach($orders as $order){    
+                                   
                             ?>
+                            <tr>
+                                <td><?php echo $order['id']; ?></td>
+                                <td><?php echo $order['order_id']; ?></td>
+
+                                <td><?php echo $order['title']; ?></td>
+                                <td><?php echo $order['amount']; ?></td>
+                                <td><?php echo $order['quantity']; ?></td>
+
+                                <td><?php echo $order['order_date']; ?></td> 
+                                <td><?php echo $order['payment_id']; ?></td>
+                                <td><?php echo $order_status[$order['status']]; ?></td>
+
+                            </tr>
+                               
+                          
+                          <?php  } 
+                          ?>  </table>
+                          <?php
+                           }else{
+echo "No orders";
+                           }
+                          ?>
                         </div>
                     </div>
                 </div>

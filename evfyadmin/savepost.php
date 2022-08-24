@@ -2,7 +2,7 @@
 require_once("../vendor/dbconnect.php");
 if (isset($_POST['submit-post']) && $_POST['submit-post'] == 'add') {
     $data['title'] = isset($_POST['title']) ? $_POST['title'] : null;
-    $data['category_ids'] = isset($_POST['blogcat']) ? $_POST['blogcat'] : 0;
+    $data['meta'] = isset($_POST['meta']) ? $_POST['meta'] : $data['title'];
     $data['slug'] = isset($_POST['slug']) ? $_POST['slug'] : null;
     $data['postbody'] = isset($_POST['postbody']) ? htmlspecialchars($_POST['postbody']) : null;
     $data['status'] = 1;
@@ -12,8 +12,9 @@ if (isset($_POST['submit-post']) && $_POST['submit-post'] == 'add') {
         print_r($_FILES);
         if (isset($_FILES['files']) && $_FILES['files']['name'] != "") {
             $img = "../uploads/products/" . $_FILES['files']['name'];
+            $img1 = "uploads/products/" . $_FILES['files']['name'];
             if (move_uploaded_file($_FILES["files"]["tmp_name"],  $img)) {
-                DB::update("posts", ['image' => $img], "id=$id");
+                DB::update("posts", ['image' => $img1], "id=$id");
                 header("Location:blog.php");
             }
         }
@@ -22,7 +23,7 @@ if (isset($_POST['submit-post']) && $_POST['submit-post'] == 'add') {
     }
 } else {
     $data['title'] = isset($_POST['title']) ? $_POST['title'] : null;
-    $data['category_ids'] = isset($_POST['blogcat']) ? $_POST['blogcat'] : 0;
+    $data['meta'] = isset($_POST['meta']) ? $_POST['meta'] : '';
     //$data['slug'] = isset($_POST['slug']) ? $_POST['slug'] : null;
     $data['postbody'] = isset($_POST['postbody']) ? htmlspecialchars($_POST['postbody']) : null;
     $id = isset($_POST['postid']) ? $_POST['postid'] : null;;

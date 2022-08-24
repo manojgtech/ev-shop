@@ -35,7 +35,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" onclick="editBrand(this);">Save changes</button>
+        <button type="button" class="btn btn-primary" onclick="editBrand(this);"> Update</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
@@ -68,6 +68,7 @@
             </select>
           </div>
           <div class='form-group'><label>Brand Name</label><input class='form-control' type='text' value='' name='name' required placeholder="brand name" /></div>
+          <div class='form-group'><label>Brand Image</label><input class='form-control' type='file' value='' name='file' required  /></div>
           <div class='form-group'><label>Status</label><select class='form-control' name='status' />
             <option value=1>Active</option>
             <option value=0>Dective</option></select>
@@ -77,7 +78,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" onClick="addbrand(this);">Save changes</button>
+        <button type="button" class="btn btn-primary" onClick="addbrand(this);">Add</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
@@ -104,8 +105,8 @@
         <p>Do you want to delete it?</p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="delpopup_btn" data-id="" onclick="delbrand();">Save changes</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+        <button type="button" class="btn btn-primary" id="delpopup_btn" data-id="" onclick="delbrand();">Yes</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
@@ -117,3 +118,6 @@
   })
 </script> <!-- Footer -->
 <?php require_once("footer.php"); ?>
+
+
+
